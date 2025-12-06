@@ -1,0 +1,15 @@
+ESTADÍSTICAS DE INTERVALOS ENTRE ARRIBOS
+============================================================
+
+total_intervalos: 149999
+media: 49.9682
+mediana: 26.8500
+desviacion_estandar: 71.0677
+minimo: 0.0167
+maximo: 923.2833
+percentil_25: 10.3833
+percentil_75: 59.5000
+percentil_95: 175.7500
+percentil_99: 378.5170
+intervalos_validos: 149999
+intervalos_anomalos: 0
