@@ -2,4 +2,4 @@
 # Ignorar todo excepto archivos .txt
 fdp/*
 !fdp/*.txt
-
+__pycache__/
