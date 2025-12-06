@@ -1,0 +1,5 @@
+# Carpeta con datos de arribos hospitalarios (muy grandes, no subir)
+# Ignorar todo excepto archivos .txt
+fdp/*
+!fdp/*.txt
+
