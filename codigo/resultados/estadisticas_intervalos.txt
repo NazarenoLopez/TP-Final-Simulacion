@@ -1,7 +1,7 @@
 ESTADÍSTICAS DE INTERVALOS ENTRE ARRIBOS
 ============================================================
 
-total_intervalos: 149999
+total_intervalos: 1499990
 media: 49.9682
 mediana: 26.8333
 desviacion_estandar: 71.0669
