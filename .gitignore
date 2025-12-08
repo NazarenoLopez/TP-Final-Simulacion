@@ -4,3 +4,6 @@ fdp/*
 !fdp/*.txt
 __pycache__/
 CopiadePaperTPFINAL.txt
+codigo/simulacion/resultados_simulacion/G2*/
+codigo/simulacion/resultados_simulacion/G3*/
+codigo/simulacion/resultados_simulacion/G4*/

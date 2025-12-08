@@ -1,0 +1,25 @@
+================================================================================
+REPORTE DE ANÁLISIS DE RESULTADOS
+================================================================================
+
+Total de escenarios analizados: 108
+
+MEJORES ESCENARIOS:
+--------------------------------------------------------------------------------
+
+Menor tiempo de espera general:
+  G=3.0, SR=26.0, I=15.0
+  PEC_general: 7.62 min
+
+Menor porcentaje de derivaciones SR:
+  G=2.0, SR=28.0, I=17.0
+  PPDSR: 0.00%
+
+Menor porcentaje de derivaciones INC:
+  G=2.0, SR=20.0, I=13.0
+  PPDINC: 0.00%
+
+Menor costo total mensual:
+  G=2.0, SR=26.0, I=19.0
+  CTM: $572,759,627
+
