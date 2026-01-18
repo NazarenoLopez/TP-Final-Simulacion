@@ -6,8 +6,37 @@ import json
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
 import numpy as np
+from multiprocessing import Pool, cpu_count
+from functools import partial
+import sys
 
 from .simulador import Simulador
+
+
+def _ejecutar_replica_individual(args: Tuple[int, int, int, int, int, int, str]) -> Tuple[int, Dict[str, Any]]:
+    """
+    Función auxiliar para ejecutar una réplica individual.
+    Necesaria para multiprocessing (debe ser picklable).
+    
+    Args:
+        args: Tupla con (replica, G, SR, I, semilla, directorio_escenario_str, nombre_escenario)
+        
+    Returns:
+        Tupla (replica, resultados)
+    """
+    replica, G, SR, I, semilla, directorio_escenario_str, nombre_escenario = args
+    directorio_escenario = Path(directorio_escenario_str)
+    
+    # Crear y ejecutar simulador
+    simulador = Simulador(G=G, SR=SR, I=I, semilla=semilla)
+    resultados = simulador.ejecutar(mostrar_progreso=False)
+    
+    # Guardar réplica individual
+    archivo_replica = directorio_escenario / f"replica_{replica:02d}.json"
+    with open(archivo_replica, 'w', encoding='utf-8') as f:
+        json.dump(resultados, f, indent=2, ensure_ascii=False)
+    
+    return (replica, resultados)
 
 
 class Experimento:
@@ -57,10 +86,11 @@ class Experimento:
         I: int, 
         num_replicas: int = 30,
         semilla_base: int = 42,
-        mostrar_progreso: bool = False
+        mostrar_progreso: bool = False,
+        num_procesos: int = None
     ) -> Dict[str, Any]:
         """
-        Ejecuta un escenario completo con múltiples réplicas.
+        Ejecuta un escenario completo con múltiples réplicas en paralelo.
         
         Args:
             G: Cantidad de médicos
@@ -69,6 +99,7 @@ class Experimento:
             num_replicas: Número de réplicas a ejecutar
             semilla_base: Semilla base para generar semillas únicas
             mostrar_progreso: Si mostrar progreso por consola
+            num_procesos: Número de procesos paralelos (None = usar todos los núcleos)
             
         Returns:
             Diccionario con resultados agregados del escenario
@@ -77,25 +108,46 @@ class Experimento:
         directorio_escenario = self.directorio_resultados / nombre_escenario
         directorio_escenario.mkdir(parents=True, exist_ok=True)
         
-        replicas = []
+        # Determinar número de procesos
+        # Limitar a un máximo razonable para evitar problemas de memoria en Windows
+        if num_procesos is None:
+            num_procesos = min(cpu_count(), 12)  # Máximo 12 procesos para evitar problemas de memoria
         
-        # Ejecutar réplicas
+        # Preparar argumentos para cada réplica
+        args_replicas = []
         for replica in range(1, num_replicas + 1):
             semilla = semilla_base + replica * 1000 + G * 100 + SR * 10 + I
-            
+            args_replicas.append((
+                replica, G, SR, I, semilla, 
+                str(directorio_escenario), nombre_escenario
+            ))
+        
+        # Ejecutar réplicas en paralelo
+        if mostrar_progreso:
+            print(f"  Ejecutando {num_replicas} réplicas en paralelo ({num_procesos} procesos)...")
+        
+        replicas_dict = {}
+        try:
+            with Pool(processes=num_procesos) as pool:
+                resultados_paralelos = pool.map(_ejecutar_replica_individual, args_replicas)
+        except Exception as e:
             if mostrar_progreso:
-                print(f"\nEjecutando réplica {replica}/{num_replicas} - Escenario: {nombre_escenario}")
-            
-            # Crear y ejecutar simulador
-            simulador = Simulador(G=G, SR=SR, I=I, semilla=semilla)
-            resultados = simulador.ejecutar(mostrar_progreso=mostrar_progreso)
-            
-            # Guardar réplica individual
-            archivo_replica = directorio_escenario / f"replica_{replica:02d}.json"
-            with open(archivo_replica, 'w', encoding='utf-8') as f:
-                json.dump(resultados, f, indent=2, ensure_ascii=False)
-            
-            replicas.append(resultados)
+                print(f"  Error en paralelización: {e}")
+                print(f"  Reintentando con menos procesos...")
+            # Reintentar con menos procesos si falla
+            num_procesos_reducido = max(1, num_procesos // 2)
+            with Pool(processes=num_procesos_reducido) as pool:
+                resultados_paralelos = pool.map(_ejecutar_replica_individual, args_replicas)
+        
+        # Organizar resultados por número de réplica
+        for replica, resultados in resultados_paralelos:
+            replicas_dict[replica] = resultados
+        
+        # Convertir a lista ordenada
+        replicas = [replicas_dict[i] for i in range(1, num_replicas + 1)]
+        
+        if mostrar_progreso:
+            print(f"  ✓ Réplicas completadas para {nombre_escenario}")
         
         # Calcular estadísticas agregadas
         estadisticas = self._calcular_estadisticas(replicas)
@@ -111,15 +163,17 @@ class Experimento:
         self,
         num_replicas: int = 30,
         semilla_base: int = 42,
-        mostrar_progreso: bool = True
+        mostrar_progreso: bool = True,
+        num_procesos: int = None
     ) -> List[Dict[str, Any]]:
         """
-        Ejecuta todos los escenarios.
+        Ejecuta todos los escenarios usando procesamiento paralelo.
         
         Args:
             num_replicas: Número de réplicas por escenario
             semilla_base: Semilla base para generar semillas únicas
             mostrar_progreso: Si mostrar progreso por consola
+            num_procesos: Número de procesos paralelos (None = usar todos los núcleos)
             
         Returns:
             Lista con resultados de todos los escenarios
@@ -127,12 +181,19 @@ class Experimento:
         escenarios = self.generar_escenarios()
         resultados_todos = []
         
+        # Determinar número de procesos
+        # Limitar a un máximo razonable para evitar problemas de memoria en Windows
+        if num_procesos is None:
+            num_procesos = min(cpu_count(), 12)  # Máximo 12 procesos para evitar problemas de memoria
+        
         print(f"\n{'='*80}")
-        print(f"EJECUTANDO EXPERIMENTOS")
+        print(f"EJECUTANDO EXPERIMENTOS (PARALELO)")
         print(f"{'='*80}")
         print(f"Total de escenarios: {len(escenarios)}")
         print(f"Réplicas por escenario: {num_replicas}")
         print(f"Total de simulaciones: {len(escenarios) * num_replicas}")
+        print(f"Procesos paralelos: {num_procesos} (de {cpu_count()} núcleos disponibles)")
+        print(f"Nota: Limitado a 12 procesos para evitar problemas de memoria")
         print(f"{'='*80}\n")
         
         for idx, (G, SR, I) in enumerate(escenarios, 1):
@@ -144,7 +205,8 @@ class Experimento:
                 I=I,
                 num_replicas=num_replicas,
                 semilla_base=semilla_base,
-                mostrar_progreso=False  # No mostrar progreso de réplicas individuales
+                mostrar_progreso=mostrar_progreso,
+                num_procesos=num_procesos
             )
             
             resultados_todos.append(estadisticas)

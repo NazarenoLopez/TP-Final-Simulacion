@@ -26,7 +26,7 @@ def main():
     print(f"  G (médicos): {G}")
     print(f"  SR (salas recuperación): {SR}")
     print(f"  I (incubadoras): {I}")
-    print(f"\nEjecutando simulación (1 año = 525,600 minutos)...")
+    print(f"\nEjecutando simulación (10 años = 5,256,000 minutos)...")
     print("Esto puede tomar unos minutos...\n")
     
     # Crear y ejecutar simulador

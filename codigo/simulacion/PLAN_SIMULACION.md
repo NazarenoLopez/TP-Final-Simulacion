@@ -9,7 +9,7 @@
 - **Tipo**: Simulación de eventos discretos con avance evento a evento
 - **Motor**: Tabla de Eventos Futuros (TEF) implementada como cola de prioridad
 - **Unidad de tiempo**: Minutos (para precisión en arribos y servicios)
-- **Horizonte**: 1 año calendario = 365 × 24 × 60 = 525,600 minutos
+- **Horizonte**: 10 años calendario = 10 × 365 × 24 × 60 = 5,256,000 minutos
 
 ### 1.2. Componentes Principales
 1. **Generador de Variables Aleatorias**: Módulo para todas las FDP
@@ -359,7 +359,7 @@ Total de escenarios: 3 × 4 × 4 = 48 escenarios
 
 ### 7.2. Configuración de Réplicas
 ```
-- Horizonte de simulación: 1 año = 525,600 minutos
+- Horizonte de simulación: 10 años = 5,256,000 minutos
 - Número de réplicas por escenario: 30
 - Semillas aleatorias: diferentes para cada réplica
 - Período de calentamiento: 43,200 minutos (30 días = 1 mes) - descartar resultados

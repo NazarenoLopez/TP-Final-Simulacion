@@ -8,6 +8,14 @@ from pathlib import Path
 # Agregar directorio padre al path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+# Configurar multiprocessing para Windows ANTES de importar otros módulos
+if sys.platform == 'win32':
+    import multiprocessing
+    try:
+        multiprocessing.set_start_method('spawn', force=True)
+    except RuntimeError:
+        pass  # Ya está configurado
+
 from simulacion.experimentos import Experimento
 from simulacion.analisis_resultados import AnalizadorResultados
 
@@ -30,9 +38,14 @@ def main():
     print(f"\n{'='*80}")
     print("CONFIGURACIÓN DE EXPERIMENTOS")
     print(f"{'='*80}")
+    import multiprocessing
+    
+    num_nucleos = multiprocessing.cpu_count()
     print(f"Total de escenarios: {len(escenarios)}")
     print(f"Réplicas por escenario: 30")
     print(f"Total de simulaciones: {len(escenarios) * 30}")
+    print(f"Núcleos disponibles: {num_nucleos}")
+    print(f"Modo: PARALELO (usando todos los núcleos para réplicas)")
     print(f"\nEscenarios incluyen:")
     print(f"  - G (médicos): [2, 3, 4]")
     print(f"  - SR (salas recuperación): [20, 22, 24, 26, 28, 30]")
@@ -69,9 +82,19 @@ def main():
         df = analizador.cargar_resultados()
         print(f"✓ Resultados cargados: {len(df)} escenarios")
         
-        # Generar gráficos
-        print("\nGenerando gráficos...")
+        # Mostrar resultados por escenario (variables de resultado solicitadas)
+        analizador.mostrar_resultados_por_escenario(df)
+        
+        # Elegir y mostrar las mejores opciones
+        mejores = analizador.elegir_mejores_opciones(df)
+        
+        # Generar gráficos generales
+        print("\nGenerando gráficos comparativos generales...")
         analizador.generar_graficos_comparativos(df)
+        
+        # Generar gráficos de las mejores 4 opciones
+        print("\nGenerando gráficos comparativos de las mejores 4 opciones...")
+        analizador.generar_graficos_mejores_4(df)
         
         # Generar reporte
         print("\nGenerando reporte...")

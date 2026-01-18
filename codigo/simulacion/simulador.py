@@ -27,8 +27,8 @@ class Simulador:
     Motor principal de simulación de eventos discretos.
     """
     
-    # Horizonte de simulación: 1 año = 365 × 24 × 60 = 525,600 minutos
-    TIEMPO_SIMULACION = 365 * 24 * 60
+    # Horizonte de simulación: 10 años = 10 × 365 × 24 × 60 = 5,256,000 minutos
+    TIEMPO_SIMULACION = 10 * 365 * 24 * 60
     
     # Período de calentamiento: 1 mes = 30 × 24 × 60 = 43,200 minutos
     TIEMPO_CALENTAMIENTO = 30 * 24 * 60

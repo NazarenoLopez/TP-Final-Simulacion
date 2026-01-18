@@ -40,7 +40,7 @@ codigo/simulacion/
 
 ### Parámetros del Sistema
 
-- **Horizonte de simulación**: 1 año = 525,600 minutos
+- **Horizonte de simulación**: 10 años = 5,256,000 minutos
 - **Período de calentamiento**: 1 mes = 43,200 minutos
 - **Número de réplicas por escenario**: 30
 - **Escenarios**: 108 combinaciones
