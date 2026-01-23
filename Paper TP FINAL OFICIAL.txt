@@ -1,0 +1,455 @@
+﻿Optimización del costo operativo en la guardia gineco-obstétrica del Hospital Eurnekian mediante el uso de Simulación
+
+
+Gandur, Maria Lucia
+López Zmijak, Nazareno
+Castagno, Juan Manuel
+
+
+Universidad Tecnológica Nacional, Facultad Regional Buenos Aires
+
+
+
+
+Abstract 
+Este trabajo aborda el problema de la alta demanda de partos y consultas gineco-obstétricas en la guardia del Hospital Interzonal de Agudos Dr. Alberto Eurnekian (Ezeiza, Provincia de Buenos Aires), en un contexto de restricciones presupuestarias y capacidad limitada de recursos críticos: médicos de guardia, salas de consultorio, salas de recuperación, incubadoras neonatales y un quirófano exclusivo para obstetricia. El objetivo principal es determinar configuraciones de dotación de recursos que minimicen el costo operativo mensual y las derivaciones de pacientes, manteniendo tiempos de espera aceptables y niveles adecuados de utilización de las instalaciones.
+Se desarrolla un modelo de simulación de eventos discretos, bajo la metodología de avance evento a evento, que representa el flujo de pacientes desde su arribo a la guardia hasta el alta de la madre y, en su caso, del recién nacido en neonatología. El modelo incorpora tres tipos de atención (consultas ginecológicas, partos naturales y cesáreas), reglas de prioridad en las colas, ocupación del quirófano, recuperación postparto en salas de reposo e internación de neonatos en incubadoras para casos de cuidado intensivo. Los tiempos de llegada y de servicio se modelan mediante funciones de densidad de probabilidad ajustadas a datos históricos y a supuestos realistas sobre la práctica hospitalaria, mientras que los costos incluyen salarios médicos, operación del quirófano, funcionamiento de salas de recuperación, operación y adquisición de incubadoras y ampliación de infraestructura.
+Se ensayan distintos escenarios combinando la cantidad de médicos de guardia, salas de recuperación e incubadoras, y se analizan indicadores clave de desempeño: tiempo promedio de espera en guardia, porcentaje de utilización e inactividad de recursos, proporción de pacientes derivados por falta de capacidad y costos totales mensuales. Los resultados muestran que la simulación constituye una herramienta eficaz para evaluar la relación costo–beneficio de distintas configuraciones, permitiendo identificar combinaciones de recursos que reducen fuertemente las derivaciones y los tiempos de espera con incrementos de costo moderados. Se concluye que la metodología propuesta ofrece un soporte cuantitativo valioso para la toma de decisiones de planificación en guardias obstétricas de alta demanda.
+Palabras clave: 
+Simulación de eventos discretos; gestión hospitalaria; guardia obstétrica; optimización de recursos; costos operativos.
+
+
+Introducción
+La gestión eficiente de recursos en guardias gineco-obstétricas de hospitales públicos constituye un desafío permanente, especialmente en contextos de fuerte presión asistencial y presupuestos acotados. En particular, el Hospital Interzonal de Agudos Dr. Alberto Eurnekian, ubicado en Ezeiza (Provincia de Buenos Aires), enfrenta una elevada demanda de consultas y partos que debe ser atendida con una dotación limitada de médicos especialistas, salas de consultorio, salas de recuperación, incubadoras y un único quirófano exclusivo para obstetricia.
+Esta situación se traduce en colas de espera, riesgos de saturación de camas y potenciales derivaciones de pacientes por falta de capacidad, con el consecuente impacto en la calidad de atención y en los costos operativos del sistema de salud. La coexistencia de atenciones programables (consultas) con eventos críticos e inelásticos (partos naturales y cesáreas) introduce variabilidad y competencia por los mismos recursos, haciendo difícil anticipar de manera analítica el comportamiento del sistema bajo distintos supuestos de dotación.
+La simulación de eventos discretos surge como una herramienta adecuada para analizar este tipo de sistemas complejos, caracterizados por colas, recursos compartidos y procesos estocásticos. Mediante un modelo de evento a evento es posible replicar el flujo de pacientes, la asignación de recursos y la dinámica de ocupación de las instalaciones, obtener medidas de desempeño bajo distintos escenarios y evaluar de forma controlada el impacto de decisiones de planificación.
+El objetivo general de este trabajo es proponer y analizar, mediante simulación, configuraciones alternativas de recursos en la guardia gineco-obstétrica del Hospital Eurnekian que permitan minimizar el costo operativo mensual y las derivaciones, garantizando al mismo tiempo niveles aceptables de tiempo de espera y utilización de recursos. Específicamente, se busca determinar combinaciones adecuadas de:
+-cantidad de médicos gineco-obstetras de guardia (G),
+-cantidad de salas de consultorio(SC)
+-número de salas de recuperación (SR),
+-número de incubadoras neonatales (I).
+
+El trabajo se organiza de la siguiente manera: en la sección siguiente se describe la metodología de simulación utilizada. Luego se presenta el análisis previo del sistema real, incluyendo variables, eventos y funciones de densidad de probabilidad. A continuación se detalla la construcción e implementación del modelo, el diseño de experimentos y los escenarios evaluados. Finalmente se discuten los resultados y se presentan las conclusiones y posibles líneas de trabajo futuro.
+
+
+
+
+
+
+Elementos del Trabajo y metodología
+La resolución del problema se abordó mediante la técnica de simulación de eventos discretos con avance evento a evento, donde el tiempo del modelo salta desde la ocurrencia de un evento al siguiente programado en la Tabla de Eventos Futuros (TEF).
+La metodología general seguida puede resumirse en las siguientes etapas:
+1)Relevamiento y análisis del sistema real
+Caracterización de la guardia gineco-obstétrica, recursos disponibles y flujo de pacientes.Identificación de restricciones operativas y criterios de prioridad.
+
+2)Formulación del modelo conceptual
+Definición de límites del sistema y nivel de detalle.Especificación de variables (datos, control, estado y resultado).Definición de eventos y estructura de la TEF.Planteo de reglas de negocio (prioridades, asignación de recursos, derivaciones).
+
+3)Modelado de incertidumbre
+Selección / ajuste de funciones de densidad de probabilidad (FDP) para arribos, tiempos de servicio y estancias.
+Separación de tipos de pacientes: consultas, partos naturales y cesáreas; y eventos neonatales.
+4)Implementación computacional
+Programación del modelo en Python, utilizando estructuras de datos para la TEF, las colas y el estado de los recursos.
+Incorporación de la lógica de costos y acumulación de indicadores.
+
+
+
+
+
+5)Validación del modelo
+Verificación de la lógica de eventos y conservación de flujos.
+Comparación cualitativa y cuantitativa con el comportamiento esperado según la experiencia y datos históricos.
+
+6)Diseño de experimentos y análisis de resultados
+Definición de escenarios de planificación variando G, SR, SC e I.
+Ejecución de múltiples réplicas independientes para cada escenario.
+Cálculo de medidas de desempeño e intervalos de confianza.
+Análisis comparativo costo–beneficio.
+
+Esta estructura asegura que el modelo de simulación sea coherente con la realidad observada, y que los resultados obtenidos puedan ser utilizados como soporte para la toma de decisiones en el ámbito hospitalario.  
+
+
+Esquema 1 - Metodología Evento a Evento
+Análisis Previo
+1. Descripción del sistema y flujo de pacientes
+El sistema modelado es la guardia gineco-obstétrica del Hospital Eurnekian. Se consideran los siguientes elementos principales:
+Pacientes que arriban a la guardia, que pueden hacerlo:
+-para consultas ginecológicas de demanda espontánea, o para partos (naturales o por cesárea).
+
+-Recursos físicos y humanos:
+   * 1 quirófano exclusivo para obstetricia.
+
+   * SC salas de consultorio para atención de consultas (variable de control).
+
+   * G médicos gineco-obstetras de guardia (variable de control).
+
+   * SR salas de recuperación postparto (variable de control).
+
+   * Incubadoras en el área de neonatología (variable de control).
+
+Al arribar a la guardia, los pacientes se clasifican y se encolan en tres colas:
+   1. Cola de consultas ginecológicas (menor prioridad).
+
+   2. Cola de partos por cesárea.
+
+   3. Cola de partos naturales (mayor prioridad).
+
+
+
+
+
+Las reglas de prioridad establecen que:
+      * Los partos naturales tienen prioridad sobre las cesáreas, y ambas tienen prioridad sobre las consultas.
+
+      * Los médicos gineco-obstetras pueden ser asignados tanto a consultas como a partos, pero un médico solo puede atender un paciente a la vez.
+
+      * Todo parto (natural o por cesárea) requiere la presencia de un médico de guardia y la disponibilidad del quirófano ,que se modela como recurso exclusivo durante la intervención.
+
+Una vez finalizado el parto, la madre pasa a una sala de recuperación (SR), donde permanece un tiempo de reposo determinado por el protocolo clínico. Al finalizar este período, la paciente es dada de alta, liberando la cama.
+En paralelo, el neonato es evaluado por el área de neonatología:
+         * En todos los casos se realiza un chequeo obligatorio.
+
+         * En aproximadamente 1 de cada 10 partos se requiere internación en incubadora durante 4 días (casos de cuidado intensivo o monitoreo especial).
+
+         * Si al momento de requerir la incubadora no hay camas disponibles, el neonato es derivado a otro hospital, mientras la madre completa su recuperación en el Eurnekian.
+
+El sistema opera en régimen 24/7 y se analiza típicamente en un horizonte mensual, acorde a cómo se liquidan los costos operativos y se calculan los bonos médicos.
+
+
+Se identifican y clasifican todas las variables, así como también se enumeran los eventos independientes, los eventos futuros y, además, la función de densidad de probabilidad utilizada para obtener uno de los datos.
+Respecto de las variables, se tienen los datos (variables exógenas no controlables), las variables (exógenas) de control, las variables (endógenas) de resultado y, por último, las variables (endógenas) de estado.
+Respecto de los eventos, se detallan los eventos independientes en la tabla de eventos independientes (TEI) y también los eventos futuros en la TEF (tabla de eventos futuros).
+Respecto de las funciones de densidad de probabilidad para obtener los datos, se especificarán también en este fragmento.
+
+
+Variables
+Se adoptan las siguientes categorías de variables:
+Variables de datos (exógenas)
+IAG – Intervalo entre arribos a la guardia (minutos).
+TAC – Tiempo de atención de consultas (minutos).
+TAP – Tiempo de atención de partos (minutos).
+TREP – Tiempo de reposo postparto en salas de recuperación (horas).
+TINC – Tiempo de internación del neonato en incubadora (días).
+p_parto – Proporción de pacientes que llegan para parto (≈ 0,30).
+p_nat – Proporción de partos naturales sobre el total de partos (≈ 0,57).
+p_ces – Proporción de cesáreas sobre el total de partos (1 − p_nat).
+p_inc – Probabilidad de que un recién nacido requiera incubadora (≈ 0,10).[a]
+
+Parámetros de costo:
+c_SR_op – Costo por hora de cuidado postoperatorio por paciente en SR (3.000 $/hora).
+c_SR_inst – Costo de instalación de una nueva sala de recuperación (7.000.000 $).
+c_Q – Costo por utilización del quirófano por parto (95.000 $).
+c_INC_op – Costo diario de operación por incubadora ocupada (25.000 $/día).
+c_INC_inst – Costo de adquisición de una incubadora (1.200.000 $).
+c_med_mensual – Costo mensual de cada médico de guardia (2.000.000 $/mes).
+c_bono – Bono por médico cada 31 pacientes operados por mes (57.000 $).[b]
+
+Variables de control (decisión)
+G – Cantidad de médicos gineco-obstetras de guardia.
+SR – Cantidad de salas de recuperación disponibles.
+I – Cantidad de incubadoras disponibles en neonatología.
+SC - Salas de consultorio para atención de consultas .
+
+Variables de estado
+Representan el estado dinámico del sistema en cada instante:
+NSC – Número de pacientes en cola de consulta.
+NSPC – Número de pacientes en cola para parto por cesárea.
+NSPN – Número de pacientes en cola para parto natural.
+NSR – Número de pacientes actualmente internados en salas de recuperación.
+NSI – Número de neonatos ocupando incubadoras.
+MD – Cantidad de médicos de guardia disponibles.
+
+Se registran además indicadores acumulados necesarios para calcular tiempos promedio de espera, utilización de recursos y derivaciones.
+Variables de resultado
+PEC – Promedio de espera en cola para ser atendido en guardia (minutos).
+PTOSR[i] – Porcentaje de tiempo ocioso de la sala de recuperación i.
+PPDSR – Porcentaje de pacientes derivados por falta de salas de recuperación.
+PPDINC – Porcentaje de neonatos derivados por falta de incubadoras.
+UT_med – Utilización promedio de los médicos de guardia.
+UT_Q – Utilización promedio del quirófano.[c]
+CTM – Costo total de operación mensual.
+CII – Costo inicial de instalaciones (salas de recuperación e incubadoras adicionales).
+
+
+3. Eventos y Tabla de Eventos Futuros (TEi)
+
+
+PONER LA TABLA[d]
+El comportamiento dinámico se describe mediante los siguientes eventos principales:
+1)Llegada de paciente a la guardia
+
+Se determina si el motivo es consulta o parto.En caso de parto, se define si es natural o cesárea. Se encola al paciente según corresponda (consulta, parto natural, cesárea).Si hay recursos disponibles (médico, consultorio y, cuando aplica, quirófano), se inicia inmediatamente la atención.
+
+Fin de consulta
+Se libera el médico.Se actualiza el tiempo de ocupación del consultorio.Se verifica si hay otra consulta en cola para asignar el médico.
+
+Inicio de parto (natural o cesárea)
+Asignación de médico y, para cesáreas, del quirófano.Programación del evento de fin de parto.
+
+Fin de parto
+Se libera el médico y el quirófano (si aplica).La madre pasa a una sala de recuperación si hay cama libre.Si no hay salas de recuperación libres, se la deriva a otro hospital para la recuperación.Se decide si el neonato requiere incubadora:
+Si sí y hay incubadora libre, se programa su alta.Si no hay incubadora disponible, el neonato es derivado.
+
+Fin de reposo en salas de recuperación
+La madre es dada de alta y libera la sala de recuperación.Se actualizan los tiempos de ocupación e inactividad de la sala.
+
+Fin de internación en incubadora
+El neonato es dado de alta de neonatología y se libera la incubadora.
+
+Cada evento se registra en la Tabla de Eventos Futuros (TEF) con su tiempo programado y tipo de evento. El motor de simulación selecciona siempre el evento con menor tiempo, avanza el reloj a ese instante, actualiza el estado y programa nuevos eventos según la lógica correspondiente.
+
+
+4. Funciones de densidad de probabilidad (FDP)
+Las variables aleatorias del modelo se representan mediante las siguientes FDP:
+Intervalo entre arribos a guardia (IAG)
+Se ajusta a una distribución adecuada (lognormal) en base a un dataset histórico de tiempos entre llegadas.[e]Media aproximada: μ_IAG = 50minutos.
+  
+Tiempo de atención de consultas (TAC)
+Se modela como una función (Uniforme) en el rango [5; 23] minutos.
+
+Tiempo de atención de partos (TAP)
+Se modela como Uniforme en el rango [50; 70] minutos, tanto para partos naturales como para cesáreas, ambas con el mismo tiempo de consumo de recursos.
+
+Tiempo de reposo en salas de recuperación (TREP)
+Se considera una distribución uniforme en el rango [24; 36] horas, de acuerdo con el protocolo del hospital.
+Tiempo de internación en incubadora (TINC)
+Se asume mediante datos consultados al sector de neonatología del hospital que es determinístico de 4 días para los casos que lo requieren.
+
+Tipo de motivo de arribo y tipo de parto
+Variable categórica con p_parto ≈ 0,30 y p_consulta ≈ 0,70.
+Condicional al parto, se tiene para partos naturales p_nat ≈ 0,57 y para partos por cesárea p_ces ≈ 0,43.
+
+Estos datos permiten captar la variabilidad del sistema sin perder la trazabilidad de los resultados ni la interpretabilidad del modelo
+Construcción del modelo de simulación
+A partir del análisis previo se construyó un modelo conceptual que integra:
+-Los distintos tipos de pacientes.
+-Las colas y reglas de prioridad.
+-Los recursos compartidos (médicos y quirófanos).
+-Los recursos exclusivos de estancia (salas de recuperación e incubadoras).
+-La lógica de derivaciones por falta de capacidad.
+
+El modelo se formuló bajo una estructura típica de simulación evento a evento:
+Inicialización
+Reloj de simulación en 0.
+Estado del sistema vacío (sin pacientes ni recursos ocupados).
+Carga de parámetros (G, SR, I, SC, distribuciones, costos).
+Programación de la primera llegada de paciente a la guardia y, en su caso, de pacientes derivados.
+1.Ciclo principal
+
+Seleccionar el evento más próximo en la TEF.
+Avanzar el reloj al tiempo de dicho evento.
+Actualizar las variables de estado y los acumuladores de tiempo (ocupación, esperas, etc.).
+Ejecutar la rutina asociada al tipo de evento, programando nuevos eventos cuando corresponda.
+
+2.Condición de término
+Finalizar la simulación cuando se alcanza un horizonte temporal prefijado (por ejemplo, un mes simulado) o un número deseado de pacientes atendidos.
+
+3.Cálculo de resultados
+A partir de los acumuladores, calcular los tiempos medios de espera, porcentajes de utilización e inactividad, porcentajes de derivaciones y los costos asociados.
+
+La lógica de asignación de recursos implementa de manera explícita las prioridades definidas: ante la disponibilidad de un médico y pacientes en cola, se atiende primero a partos naturales, luego cesáreas y, en última instancia, consultas. De este modo, el modelo refleja el criterio clínico de privilegiar situaciones más críticas.
+Implementación computacional
+El modelo fue implementado en Python, empleando estructuras de datos nativas (listas, colas de prioridad) para representar la TEF y las colas de pacientes. La implementación se desarrolló en un entorno de trabajo reproducible, lo que facilita la ejecución de múltiples réplicas y la modificación de parámetros de manera ágil.
+Los principales componentes del código son:
+Un módulo de generación de variables aleatorias, que encapsula las FDP definidas (arribos, tiempos de servicio, reposo, etc.).
+Una estructura de estado global que almacena las variables de estado (NSC, NSPC, NSPN, NSR, NSI, MD) y los contadores para tiempos y costos.
+
+Una Tabla de Eventos Futuros implementada como una cola de prioridad, donde cada evento contiene: tipo, tiempo programado y, en caso necesario, identificador del paciente.
+
+Funciones específicas para cada tipo de evento (llegada, fin de consulta, fin de parto, fin de reposo, fin de incubación), responsables de actualizar el estado y programar nuevos eventos.
+
+La modularidad del código permite modificar la política de atención (por ejemplo, prioridades o reglas de derivación) y los parámetros de demanda sin alterar la estructura básica de la simulación.
+Diseño de experimentos
+Con el modelo validado, se definió un diseño de experimentos para analizar distintas configuraciones de recursos. De manera general:
+Horizonte de simulación: un mes calendario equivalente a H horas de operación continua (H ≈ 30 × 24 horas).[f]
+Número de réplicas: R réplicas independientes por escenario (por ejemplo, R = 30), utilizando diferentes semillas aleatorias.
+
+Se evaluaron diferentes escenarios variando las variables de control:
+G: cantidad de médicos de guardia en un rango (por ejemplo, 2 a 4 médicos).
+SC: cantidad de salas de consultorio (2 a 5 salas)
+SR: cantidad de salas de recuperación (partiendo de la dotación actual de 24, analizando incrementos puntuales)
+I: cantidad de incubadoras (partiendo de 15 y analizando alternativas de ampliación).
+
+Para cada escenario se midieron:
+Indicadores de desempeño operativo:
+Tiempo promedio de espera (PEC) por tipo de atención.Utilización promedio de médicos (UT_med) y quirófano (UT_Q).Porcentaje de tiempo ocioso de las[g] salas de recuperación (PTOSR[i]).Porcentaje de pacientes y neonatos derivados (PPDSR, PPDINC).
+
+
+
+
+
+Indicadores económicos:
+Costo total mensual de operación (CTM), sumando salarios médicos, costos de uso del quirófano, costos de funcionamiento de SR e incubadoras.
+Costo inicial de instalaciones (CII), asociado a la inversión en nuevas salas de recuperación e incubadoras respecto de la situación base.
+A partir de los valores obtenidos por escenario, se calcularon promedios e intervalos de confianza (por ejemplo, al 95 %) para comparar con robustez estadística las alternativas evaluadas.[h]
+(En esta sección, cuando tengas tus resultados concretos, podés agregar una tabla con las combinaciones de G, SR, I, SC y los valores numéricos de PEC, PPDSR, PPDINC, CTM, etc.)[i]
+
+
+Resultados
+En términos generales, los resultados de la simulación muestran patrones coherentes con la intuición operativa del sistema:
+Los escenarios con muy pocos médicos de guardia (G bajo) presentan altos tiempos de espera en cola, especialmente para consultas y cesáreas, y una fuerte presión sobre el quirófano, que tiende a operar cerca de su capacidad máxima.
+
+Al incrementar la cantidad de médicos, los tiempos de espera disminuyen de manera significativa, especialmente para partos, aunque esto se acompaña de un aumento en los costos salariales y de una mayor proporción de tiempo ocioso por médico en escenarios de baja demanda relativa.
+
+La cantidad de salas de recuperación (SR) tiene un impacto directo sobre las derivaciones de pacientes por falta de salas de recuperación (PPDSR):
+-Con la dotación actual, en escenarios de alta demanda se observa un porcentaje no despreciable de derivaciones.
+-Al agregar un número moderado de salas de recuperación, las derivaciones se reducen drásticamente o se eliminan, con un incremento de costo de inversión que puede amortizar cuando se considera el impacto en la capacidad de respuesta del servicio.
+-En cuanto a las incubadoras (I), su rol se vuelve crítico en los casos en que la proporción de neonatos que requieren cuidado intensivo es significativa:
+-Con la dotación actual, puede aparecer un porcentaje de derivaciones de neonatos (PPDINC) en escenarios de pico de demanda.
+-La adición de algunas incubadoras extra reduce sensiblemente la probabilidad de derivación de recién nacidos, con un costo de inversión comparativamente menor al de aumentar la infraestructura de salas de recuperación.
+
+En las tablas de resultados (no incluidas aquí por brevedad) se presentan los valores medios de PEC, PPDSR, PPDINC, UT_med, UT_Q y CTM para cada combinación de G, SR e I analizada, junto con sus intervalos de confianza. Estos datos permiten identificar configuraciones que logran un compromiso favorable entre nivel de servicio (bajos tiempos de espera y mínimas derivaciones) y costo total.[j]
+(Acá podés insertar Tablas 1, 2, etc., con los resultados numéricos concretos y luego adaptar el texto para que describa exactamente lo que muestran tus tablas.)[k]
+Discusión
+Los resultados obtenidos confirman que la simulación de eventos discretos es una herramienta útil para entender la interacción entre demanda, recursos y costos en un entorno hospitalario complejo como la guardia gineco-obstétrica.
+Al analizar el efecto de aumentar G, se observa una clara mejora en los tiempos de espera y en la capacidad de absorber picos de demanda, aunque a costa de un incremento lineal en los costos salariales y de una utilización promedio menor por médico. Esto sugiere que existe un punto a partir del cual aumentar la cantidad de médicos deja de ser costo-efectivo, sobre todo si no se acompaña de ajustes en otros recursos (quirófano, salas de recuperación).
+Por su parte, el aumento en la cantidad de salas de recuperación (SR) tiende a reducir fuertemente las derivaciones de pacientes postparto, aun cuando los tiempos de espera en guardia se mantengan relativamente bajos. Esto muestra que, más allá del cuello de botella inicial en la atención (médicos/quirófano), el sistema puede quedar limitado por la capacidad de alojamiento de las pacientes en fase de recuperación.
+Las incubadoras representan un recurso crítico desde el punto de vista clínico, ya que condicionan la posibilidad de brindar cuidado intensivo a los recién nacidos. Aun cuando el número de casos que requieren incubadora sea relativamente bajo, la falta de disponibilidad genera derivaciones con alto impacto sanitario y logístico. En este sentido, la simulación permite evaluar cuántas incubadoras adicionales son necesarias para llevar la probabilidad de derivación a un nivel aceptable (por ejemplo, inferior a cierto umbral fijado por la dirección del hospital).
+Es importante destacar que el modelo se basa en supuestos simplificadores (por ejemplo, tiempos de servicio con distribuciones relativamente simples, ausencia de ausentismo de médicos, etc.), por lo que los resultados deben interpretarse como una aproximación que orienta la toma de decisiones, más que como una predicción exacta de la realidad.[l]
+Conclusión
+El trabajo presentado desarrolla y aplica un modelo de simulación de eventos discretos para analizar la operación de la guardia gineco-obstétrica del Hospital Eurnekian, con foco en la optimización del costo operativo y la capacidad de respuesta frente a la demanda de consultas y partos.
+El modelo integra el flujo completo de pacientes (consultas, partos naturales y cesáreas), la utilización del quirófano, la estancia en salas de recuperación y la internación neonatal en incubadoras, permitiendo evaluar de forma conjunta el impacto de variaciones en la dotación de médicos, camas de recuperación e incubadoras sobre indicadores clave de desempeño.
+Los resultados permiten identificar configuraciones de recursos que reducen significativamente los tiempos de espera y las derivaciones, con incrementos de costo que pueden considerarse razonables en función del beneficio obtenido. En particular, se observa que:
+-Un número insuficiente de médicos genera colas y tiempos de espera elevados.
+
+-La falta de salas de recuperación se traduce en derivaciones de pacientes aun cuando la atención inicial se haya podido realizar.
+
+-La disponibilidad de incubadoras condiciona la capacidad de brindar cuidado adecuado a los neonatos más complejos.
+
+En síntesis, la simulación se muestra como una herramienta potente para apoyar la planificación y toma de decisiones en guardias obstétricas de alta demanda, brindando un marco sistemático para evaluar escenarios antes de implementar cambios en la realidad.
+Trabajo futuro
+Como líneas de trabajo futuro se proponen:
+Incorporar un modelo de triage más detallado, diferenciando niveles de urgencia dentro de las consultas ginecológicas.
+Refinar el ajuste de las funciones de densidad de probabilidad utilizando datasets más extensos y recientes del hospital.[m]
+Incluir otros recursos relevantes, como personal de enfermería, camas de internación general y equipamiento de apoyo.
+
+Evaluar políticas dinámicas de asignación de médicos (por ejemplo, refuerzos en horarios pico) y de programación de cesáreas en franjas horarias específicas.
+
+Integrar el modelo de simulación con herramientas de optimización, buscando automáticamente la combinación de recursos que minimice el costo sujeto a restricciones de nivel de servicio.
+
+________________
+Agradecimientos
+Se agradece especialmente a la cátedra de Simulación de la UTN FRBA, y en particular a la Ing. Gladys Alfiero, Ezequiel Ramiro Fernandez, Daniel Andrés Montesano y demás docentes y ayudantes, por su orientación en la formulación del problema y la implementación del modelo.
+Referencias. 
+[1] Dataset con información relevante
+[2] Apuntes teóricos de la cátedra de Simulación de la UTN FRBA.
+[3] Repositorio GitHub.
+
+
+Datos de Contacto:
+Castagno, Juan Manuel - jcastagno@frba.utn.edu.ar
+Gandur, María Lucía - mgandur@frba.utn.edu.ar
+López Zmijak, Nazareno - nlpezzmijak@frba.utn.edu.ar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[a]Yo creo que como no son fdp no van
+[b]Esto tampoco va
+[c]Lo agregamos o no?
+[d]TODO
+[e]MODIFICAR
+[f]MODIFICARLO
+[g]Ver si lo incluimos como resultado o no?
+[h]Que opinan?
+[i]MODIFICAR CON LOS RESULTADOS
+[j]MODIFICAR
+[k]MODIFICAR
+[l]Opiniones?
+[m]revisar

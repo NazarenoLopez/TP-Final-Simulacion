@@ -8,18 +8,18 @@ MEJORES ESCENARIOS:
 --------------------------------------------------------------------------------
 
 Menor tiempo de espera general:
-  G=4.0, SR=22.0, I=19.0
-  PEC_general: 7.76 min
+  G=4.0, SR=15.0, I=15.0
+  PEC_general: 7.60 min
 
 Menor porcentaje de derivaciones SR:
-  G=2.0, SR=30.0, I=21.0
+  G=2.0, SR=30.0, I=10.0
   PPDSR: 0.00%
 
 Menor porcentaje de derivaciones INC:
-  G=2.0, SR=20.0, I=15.0
+  G=2.0, SR=15.0, I=15.0
   PPDINC: 0.00%
 
 Menor costo total mensual:
-  G=2.0, SR=20.0, I=19.0
-  CTM: $5,783,688,885
+  G=2.0, SR=15.0, I=20.0
+  CTM: $5,653,662,856
 

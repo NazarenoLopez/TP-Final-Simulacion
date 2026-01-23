@@ -33,7 +33,7 @@ class Simulador:
     # Período de calentamiento: 1 mes = 30 × 24 × 60 = 43,200 minutos
     TIEMPO_CALENTAMIENTO = 30 * 24 * 60
     
-    def __init__(self, G: int, SR: int, I: int, semilla: Optional[int] = None):
+    def __init__(self, G: int, SR: int, I: int, SC: int = 1, semilla: Optional[int] = None):
         """
         Inicializa el simulador.
         
@@ -46,10 +46,11 @@ class Simulador:
         self.G = G
         self.SR = SR
         self.I = I
+        self.SC = SC
         self.semilla = semilla
         
         # Inicializar componentes
-        self.estado = EstadoSistema(G, SR, I)
+        self.estado = EstadoSistema(G, SR, I, SC)
         self.tef = TablaEventosFuturos()
         self.generador = GeneradorVariablesAleatorias(semilla=semilla)
         
@@ -65,7 +66,7 @@ class Simulador:
     def inicializar(self):
         """Inicializa la simulación."""
         # Resetear estado
-        self.estado = EstadoSistema(self.G, self.SR, self.I)
+        self.estado = EstadoSistema(self.G, self.SR, self.I, self.SC)
         self.tef = TablaEventosFuturos()
         
         # Resetear generador si hay semilla
@@ -137,7 +138,8 @@ class Simulador:
             'tiempo_simulacion': self.estado.tiempo_actual,
             'G': self.G,
             'SR': self.SR,
-            'I': self.I
+            'I': self.I,
+            'SC': self.SC
         }
         
         return resultados
@@ -188,6 +190,7 @@ class Simulador:
         self.estado.tiempo_total_espera_partos_ces = 0.0
         self.estado.tiempo_ocupacion_medicos = 0.0
         self.estado.tiempo_ocupacion_quirofano = 0.0
+        self.estado.tiempo_ocupacion_consultorios = self.estado.tiempo_ocupacion_consultorios * 0.0
         self.estado.tiempo_ocupacion_sr = self.estado.tiempo_ocupacion_sr * 0.0
         self.estado.tiempo_inactividad_sr = self.estado.tiempo_inactividad_sr * 0.0
         self.estado.tiempo_ocupacion_inc = self.estado.tiempo_ocupacion_inc * 0.0

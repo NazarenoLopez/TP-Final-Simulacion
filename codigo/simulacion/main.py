@@ -18,6 +18,7 @@ if sys.platform == 'win32':
 
 from simulacion.experimentos import Experimento
 from simulacion.analisis_resultados import AnalizadorResultados
+import argparse
 
 
 def main():
@@ -33,6 +34,13 @@ def main():
     # Crear experimento
     experimento = Experimento(directorio_resultados=str(directorio_resultados))
     
+    # Argumentos CLI
+    parser = argparse.ArgumentParser(description="Simulación Guardia Gineco-Obstétrica")
+    parser.add_argument("--replicas", type=int, default=5, help="Número de réplicas por escenario (default: 5)")
+    parser.add_argument("--procesos", type=int, default=None, help="Número de procesos paralelos (default: todos los núcleos)")
+    parser.add_argument("--yes", action="store_true", help="Saltar confirmación y ejecutar directamente")
+    args = parser.parse_args()
+
     # Mostrar información de escenarios
     escenarios = experimento.generar_escenarios()
     print(f"\n{'='*80}")
@@ -41,33 +49,32 @@ def main():
     import multiprocessing
     
     num_nucleos = multiprocessing.cpu_count()
+    replicas = args.replicas
     print(f"Total de escenarios: {len(escenarios)}")
-    print(f"Réplicas por escenario: 30")
-    print(f"Total de simulaciones: {len(escenarios) * 30}")
+    print(f"Réplicas por escenario: {replicas}")
+    print(f"Total de simulaciones: {len(escenarios) * replicas}")
     print(f"Núcleos disponibles: {num_nucleos}")
     print(f"Modo: PARALELO (usando todos los núcleos para réplicas)")
     print(f"\nEscenarios incluyen:")
     print(f"  - G (médicos): [2, 3, 4]")
-    print(f"  - SR (salas recuperación): [20, 22, 24, 26, 28, 30]")
-    print(f"    * Dotación actual: 24")
-    print(f"    * Incluye casos con MENOS recursos: 20, 22")
-    print(f"  - I (incubadoras): [11, 13, 15, 17, 19, 21]")
-    print(f"    * Dotación actual: 15")
-    print(f"    * Incluye casos con MENOS recursos: 11, 13")
+    print(f"  - SC (salas de consultorio): [2, 3, 4, 5]")
+    print(f"  - SR (salas recuperación): [15, 24, 30]")
+    print(f"  - I (incubadoras): [10, 15, 20]")
     print(f"{'='*80}")
     
-    print("\n¿Deseas ejecutar todos los escenarios?")
-    print("Esto puede tomar varias horas dependiendo de tu hardware...")
-    respuesta = input("¿Continuar? (s/n): ").lower().strip()
-    
-    if respuesta != 's':
-        print("Ejecución cancelada.")
-        return
+    if not args.yes:
+        print("\n¿Deseas ejecutar todos los escenarios?")
+        print("Esto puede tomar tiempo dependiendo de tu hardware...")
+        respuesta = input("¿Continuar? (s/n): ").lower().strip()
+        if respuesta != 's':
+            print("Ejecución cancelada.")
+            return
     
     resultados = experimento.ejecutar_todos_escenarios(
-        num_replicas=30,
+        num_replicas=replicas,
         semilla_base=42,
-        mostrar_progreso=True
+        mostrar_progreso=True,
+        num_procesos=(args.procesos or num_nucleos)
     )
     
     print(f"\n{'='*80}")
@@ -95,6 +102,16 @@ def main():
         # Generar gráficos de las mejores 4 opciones
         print("\nGenerando gráficos comparativos de las mejores 4 opciones...")
         analizador.generar_graficos_mejores_4(df)
+
+        # Generar gráficos de los casos destacados solicitados
+        casos_destacados = [
+            {'G': 4, 'SR': 15, 'I': 15},  # menor PEC
+            {'G': 2, 'SR': 30, 'I': 10},  # menor PPDSR
+            {'G': 2, 'SR': 15, 'I': 15},  # menor PPDINC
+            {'G': 2, 'SR': 15, 'I': 20},  # menor CTM
+        ]
+        print("\nGenerando gráfico de casos destacados...")
+        analizador.generar_graficos_casos_destacados(df, casos_destacados)
         
         # Generar reporte
         print("\nGenerando reporte...")

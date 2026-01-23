@@ -31,6 +31,7 @@ def procesar_inicio_consulta(
         generador: Generador de variables aleatorias
     """
     paciente = evento.datos_extra['paciente']
+    consultorio_id = evento.datos_extra.get('consultorio_id', -1)
     
     # Registrar tiempo de inicio de atención
     paciente.tiempo_inicio_atencion = estado.tiempo_actual
@@ -47,7 +48,11 @@ def procesar_inicio_consulta(
         tipo='fin_consulta',
         tiempo=estado.tiempo_actual + tac,
         paciente_id=paciente.id,
-        datos_extra={'paciente': paciente, 'tac': tac}
+        datos_extra={
+            'paciente': paciente,
+            'tac': tac,
+            'consultorio_id': consultorio_id
+        }
     )
     tef.insertar(evento_fin)
 
@@ -76,9 +81,12 @@ def procesar_fin_consulta(
     """
     paciente = evento.datos_extra['paciente']
     tac = evento.datos_extra['tac']
+    consultorio_id = evento.datos_extra.get('consultorio_id', -1)
     
-    # Liberar médico
+    # Liberar médico y consultorio
     estado.medicos_disponibles += 1
+    if consultorio_id >= 0:
+        estado.liberar_consultorio(consultorio_id, tac)
     
     # Actualizar contadores
     estado.total_consultas += 1

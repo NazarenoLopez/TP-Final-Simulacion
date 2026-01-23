@@ -332,6 +332,66 @@ class AnalizadorResultados:
             f.write(f"  CTM: ${mejor_costo['CTM_media']:,.0f}\n\n")
         
         print(f"✓ Reporte guardado: {archivo}")
+
+    def generar_graficos_casos_destacados(self, df: pd.DataFrame, casos: list, output_dir: Path = None):
+        """Genera gráficos comparativos para casos destacados específicos.
+
+        Args:
+            df: DataFrame con resultados agregados.
+            casos: Lista de dicts con claves 'G', 'SR', 'I'. SC se inferirá del df.
+            output_dir: Directorio de salida para los gráficos.
+        """
+        if output_dir is None:
+            output_dir = self.directorio_resultados
+        output_dir = Path(output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        filas = []
+        etiquetas = []
+        for caso in casos:
+            sub = df[(df['G'] == caso['G']) & (df['SR'] == caso['SR']) & (df['I'] == caso['I'])]
+            if sub.empty:
+                continue
+            # Si hay varias SC para mismos G, SR, I, tomar la de mejor PEC general
+            sub_sorted = sub.sort_values('PEC_general_media')
+            fila = sub_sorted.iloc[0]
+            filas.append(fila)
+            etiquetas.append(f"G{int(fila['G'])}_SR{int(fila['SR'])}_I{int(fila['I'])}_SC{int(fila['SC'])}")
+
+        if not filas:
+            print("No se encontraron casos destacados en el DataFrame.")
+            return
+
+        datos = pd.DataFrame(filas, index=etiquetas)
+
+        # Métricas a comparar
+        metricas = {
+            'PEC_general_media': 'PEC general (min)',
+            'PPDSR_media': 'Derivaciones SR (%)',
+            'PPDINC_media': 'Derivaciones INC (%)',
+            'CTM_media': 'CTM ($)',
+            'CII_media': 'CII ($)',
+            'UT_med_media': 'Utilización médicos (%)',
+            'UT_Q_media': 'Utilización quirófano (%)',
+            'PTOSR_promedio_media': 'PTOSR promedio (%)'
+        }
+
+        # Crear figura de múltiples subplots
+        fig, axes = plt.subplots(2, 4, figsize=(18, 8))
+        axes = axes.flatten()
+
+        for ax, (col, titulo) in zip(axes, metricas.items()):
+            valores = datos[col]
+            ax.bar(valores.index, valores.values, color='steelblue', alpha=0.8)
+            ax.set_title(titulo)
+            ax.tick_params(axis='x', rotation=35)
+            ax.grid(True, alpha=0.2)
+
+        plt.tight_layout()
+        salida = output_dir / "casos_destacados.png"
+        plt.savefig(salida, dpi=300, bbox_inches='tight')
+        plt.close()
+        print(f"✓ Gráfico de casos destacados guardado en: {salida}")
     
     def mostrar_resultados_por_escenario(self, df: pd.DataFrame):
         """
@@ -356,7 +416,7 @@ class AnalizadorResultados:
         
         for idx, row in df_ordenado.iterrows():
             print(f"\n{'─'*100}")
-            print(f"ESCENARIO: G={int(row['G'])}, SR={int(row['SR'])}, I={int(row['I'])}")
+            print(f"ESCENARIO: G={int(row['G'])}, SR={int(row['SR'])}, I={int(row['I'])}, SC={int(row['SC'])}")
             print(f"{'─'*100}")
             
             # PEC - Promedio de espera en cola
@@ -376,7 +436,7 @@ class AnalizadorResultados:
             print(f"  IC 95%: [{ptosr_ic_inf:.2f}%, {ptosr_ic_sup:.2f}%]")
             
             # Intentar cargar PTOSR por sala desde las réplicas si están disponibles
-            nombre_escenario = f"G{int(row['G'])}_SR{int(row['SR'])}_I{int(row['I'])}"
+            nombre_escenario = f"G{int(row['G'])}_SR{int(row['SR'])}_I{int(row['I'])}_SC{int(row['SC'])}"
             directorio_escenario = self.directorio_resultados / nombre_escenario
             if directorio_escenario.exists():
                 try:
@@ -461,10 +521,11 @@ class AnalizadorResultados:
             'G': int(mejor_pec['G']),
             'SR': int(mejor_pec['SR']),
             'I': int(mejor_pec['I']),
+            'SC': int(mejor_pec['SC']),
             'valor': mejor_pec['PEC_general_media']
         }
         print(f"\n1. MENOR PEC (Mejor tiempo de espera):")
-        print(f"   Escenario: G={mejores['menor_PEC']['G']}, SR={mejores['menor_PEC']['SR']}, I={mejores['menor_PEC']['I']}")
+        print(f"   Escenario: G={mejores['menor_PEC']['G']}, SR={mejores['menor_PEC']['SR']}, I={mejores['menor_PEC']['I']}, SC={mejores['menor_PEC']['SC']}")
         print(f"   PEC: {mejores['menor_PEC']['valor']:.2f} minutos")
         
         # 2. Mayor PTOSR promedio (mejor utilización de recursos - menos ocio)
@@ -476,10 +537,11 @@ class AnalizadorResultados:
             'G': int(mejor_ptosr['G']),
             'SR': int(mejor_ptosr['SR']),
             'I': int(mejor_ptosr['I']),
+            'SC': int(mejor_ptosr['SC']),
             'valor': mejor_ptosr['PTOSR_promedio_media']
         }
         print(f"\n2. MAYOR PTOSR (Mayor tiempo ocioso - puede indicar sobrecapacidad):")
-        print(f"   Escenario: G={mejores['mayor_PTOSR']['G']}, SR={mejores['mayor_PTOSR']['SR']}, I={mejores['mayor_PTOSR']['I']}")
+        print(f"   Escenario: G={mejores['mayor_PTOSR']['G']}, SR={mejores['mayor_PTOSR']['SR']}, I={mejores['mayor_PTOSR']['I']}, SC={mejores['mayor_PTOSR']['SC']}")
         print(f"   PTOSR promedio: {mejores['mayor_PTOSR']['valor']:.2f}%")
         
         # 3. Menor PPDSR (menor derivación por falta de salas)
@@ -489,10 +551,11 @@ class AnalizadorResultados:
             'G': int(mejor_ppdsr['G']),
             'SR': int(mejor_ppdsr['SR']),
             'I': int(mejor_ppdsr['I']),
+            'SC': int(mejor_ppdsr['SC']),
             'valor': mejor_ppdsr['PPDSR_media']
         }
         print(f"\n3. MENOR PPDSR (Menor derivación por falta de salas):")
-        print(f"   Escenario: G={mejores['menor_PPDSR']['G']}, SR={mejores['menor_PPDSR']['SR']}, I={mejores['menor_PPDSR']['I']}")
+        print(f"   Escenario: G={mejores['menor_PPDSR']['G']}, SR={mejores['menor_PPDSR']['SR']}, I={mejores['menor_PPDSR']['I']}, SC={mejores['menor_PPDSR']['SC']}")
         print(f"   PPDSR: {mejores['menor_PPDSR']['valor']:.2f}%")
         
         # 4. Menor CTM (menor costo operativo)
@@ -502,10 +565,11 @@ class AnalizadorResultados:
             'G': int(mejor_ctm['G']),
             'SR': int(mejor_ctm['SR']),
             'I': int(mejor_ctm['I']),
+            'SC': int(mejor_ctm['SC']),
             'valor': mejor_ctm['CTM_media']
         }
         print(f"\n4. MENOR CTM (Menor costo operativo mensual):")
-        print(f"   Escenario: G={mejores['menor_CTM']['G']}, SR={mejores['menor_CTM']['SR']}, I={mejores['menor_CTM']['I']}")
+        print(f"   Escenario: G={mejores['menor_CTM']['G']}, SR={mejores['menor_CTM']['SR']}, I={mejores['menor_CTM']['I']}, SC={mejores['menor_CTM']['SC']}")
         print(f"   CTM: ${mejores['menor_CTM']['valor']:,.0f}")
         
         # 5. Menor CII (menor costo de inversión)
@@ -515,10 +579,11 @@ class AnalizadorResultados:
             'G': int(mejor_cii['G']),
             'SR': int(mejor_cii['SR']),
             'I': int(mejor_cii['I']),
+            'SC': int(mejor_cii['SC']),
             'valor': mejor_cii['CII_media']
         }
         print(f"\n5. MENOR CII (Menor costo inicial de instalaciones):")
-        print(f"   Escenario: G={mejores['menor_CII']['G']}, SR={mejores['menor_CII']['SR']}, I={mejores['menor_CII']['I']}")
+        print(f"   Escenario: G={mejores['menor_CII']['G']}, SR={mejores['menor_CII']['SR']}, I={mejores['menor_CII']['I']}, SC={mejores['menor_CII']['SC']}")
         print(f"   CII: ${mejores['menor_CII']['valor']:,.0f}")
         
         # 6. Opción balanceada (combinando criterios)
@@ -539,13 +604,14 @@ class AnalizadorResultados:
             'G': int(mejor_balanceado['G']),
             'SR': int(mejor_balanceado['SR']),
             'I': int(mejor_balanceado['I']),
+            'SC': int(mejor_balanceado['SC']),
             'PEC': mejor_balanceado['PEC_general_media'],
             'PPDSR': mejor_balanceado['PPDSR_media'],
             'CTM': mejor_balanceado['CTM_media'],
             'CII': mejor_balanceado['CII_media']
         }
         print(f"\n6. OPCIÓN BALANCEADA (Mejor combinación de criterios):")
-        print(f"   Escenario: G={mejores['balanceado']['G']}, SR={mejores['balanceado']['SR']}, I={mejores['balanceado']['I']}")
+        print(f"   Escenario: G={mejores['balanceado']['G']}, SR={mejores['balanceado']['SR']}, I={mejores['balanceado']['I']}, SC={mejores['balanceado']['SC']}")
         print(f"   PEC: {mejores['balanceado']['PEC']:.2f} min")
         print(f"   PPDSR: {mejores['balanceado']['PPDSR']:.2f}%")
         print(f"   CTM: ${mejores['balanceado']['CTM']:,.0f}")
@@ -632,7 +698,7 @@ class AnalizadorResultados:
         # Crear etiquetas para los escenarios
         etiquetas = []
         for idx, row in mejores_4.iterrows():
-            etiquetas.append(f"G{int(row['G'])}_SR{int(row['SR'])}_I{int(row['I'])}")
+            etiquetas.append(f"G{int(row['G'])}_SR{int(row['SR'])}_I{int(row['I'])}_SC{int(row['SC'])}")
         
         # Configuración de matplotlib
         plt.rcParams['figure.figsize'] = (16, 10)
@@ -731,7 +797,7 @@ class AnalizadorResultados:
         tabla_datos = []
         for idx, row in mejores_4.iterrows():
             tabla_datos.append([
-                f"G{int(row['G'])}_SR{int(row['SR'])}_I{int(row['I'])}",
+                f"G{int(row['G'])}_SR{int(row['SR'])}_I{int(row['I'])}_SC{int(row['SC'])}",
                 f"{row['PEC_general_media']:.2f} min",
                 f"{row['PTOSR_promedio_media']:.2f}%",
                 f"{row['PPDSR_media']:.2f}%",

@@ -12,18 +12,21 @@ class CalculadoraCostos:
     Calcula los costos operativos e inversión del sistema.
     """
     
-    # Parámetros de costo según el paper
-    C_SR_OP = 3000.0  # $/hora
-    C_SR_INST = 7000000.0  # $
-    C_Q = 95000.0  # $ por uso
-    C_INC_OP = 25000.0  # $/día
-    C_INC_INST = 1200000.0  # $
-    C_MED_MENSUAL = 2000000.0  # $/mes
-    C_BONO = 57000.0  # $ por bono
+    # Parámetros de costo según la propuesta formal
+    C_SR_OP = 3000.0  # $/hora - Costo operación recuperación
+    C_SR_INST = 7000000.0  # $ - Costo instalación sala recuperación
+    C_Q = 95000.0  # $ por uso - Costo quirófano
+    C_INC_OP = 25000.0  # $/día - Costo operación incubadora
+    C_INC_INST = 1200000.0  # $ - Costo instalación incubadora
+    C_MED_MENSUAL = 2000000.0  # $/mes - Salario médico
+    C_BONO = 57000.0  # $ por bono - Bono cada 31 pacientes operados
+    C_SC_INST = 10000000.0  # $ - Costo instalación sala consultorio
     
-    # Dotación base del hospital
-    SR_BASE = 24
-    I_BASE = 15
+    # Dotación base del hospital (configuración ACTUAL)
+    G_BASE = 1  # 1 médico según propuesta
+    SC_BASE = 1  # 1 sala de consultorio según propuesta
+    SR_BASE = 24  # 24 salas según propuesta
+    I_BASE = 15  # 15 incubadoras según propuesta
     
     def __init__(self, tiempo_simulacion: float):
         """
@@ -60,11 +63,17 @@ class CalculadoraCostos:
         # Costo de incubadoras (operación)
         costos['costo_inc_operacion'] = self._calcular_costo_inc_operacion(estado)
         
-        # Costo total mensual (CTM)
-        costos['CTM'] = (costos['costo_medicos'] + 
-                        costos['costo_quirofano'] + 
-                        costos['costo_sr_operacion'] + 
-                        costos['costo_inc_operacion'])
+        # Costo total de toda la simulación
+        costo_total_simulacion = (costos['costo_medicos'] + 
+                                 costos['costo_quirofano'] + 
+                                 costos['costo_sr_operacion'] + 
+                                 costos['costo_inc_operacion'])
+        
+        # Costo total mensual (CTM) - Promedio por mes
+        costos['CTM'] = costo_total_simulacion / self.meses_simulacion
+        
+        # Costo total de toda la simulación (para referencia)
+        costos['costo_total_10_anios'] = costo_total_simulacion
         
         # Costo inicial de instalaciones (CII)
         costos['CII'] = self._calcular_costo_instalaciones(estado)
@@ -103,10 +112,15 @@ class CalculadoraCostos:
     
     def _calcular_costo_instalaciones(self, estado: EstadoSistema) -> float:
         """Calcula costo inicial de instalaciones (solo si hay ampliación)."""
+        costo_sc = 0.0
         costo_sr = 0.0
         costo_inc = 0.0
         
-        # Costo de salas adicionales
+        # Costo de salas de consultorio adicionales
+        if estado.SC > self.SC_BASE:
+            costo_sc = (estado.SC - self.SC_BASE) * self.C_SC_INST
+        
+        # Costo de salas de recuperación adicionales
         if estado.SR > self.SR_BASE:
             costo_sr = (estado.SR - self.SR_BASE) * self.C_SR_INST
         
@@ -114,5 +128,5 @@ class CalculadoraCostos:
         if estado.I > self.I_BASE:
             costo_inc = (estado.I - self.I_BASE) * self.C_INC_INST
         
-        return costo_sr + costo_inc
+        return costo_sc + costo_sr + costo_inc
 

@@ -42,15 +42,14 @@ codigo/simulacion/
 
 - **Horizonte de simulación**: 10 años = 5,256,000 minutos
 - **Período de calentamiento**: 1 mes = 43,200 minutos
-- **Número de réplicas por escenario**: 30
-- **Escenarios**: 108 combinaciones
+- **Número de réplicas por escenario**: 20
+- **Escenarios**: 108 combinaciones (grid ajustado)
   - G (médicos): [2, 3, 4]
-  - SR (salas recuperación): [20, 22, 24, 26, 28, 30]
+  - SC (salas de consultorio): [2, 3, 4, 5]
+  - SR (salas recuperación): [15, 24, 30]
     - Dotación actual: 24
-    - Incluye casos con MENOS recursos: 20, 22
-  - I (incubadoras): [11, 13, 15, 17, 19, 21]
+  - I (incubadoras): [10, 15, 20]
     - Dotación actual: 15
-    - Incluye casos con MENOS recursos: 11, 13
 
 ### Funciones de Densidad de Probabilidad (FDP)
 
@@ -74,13 +73,17 @@ codigo/simulacion/
 
 ```bash
 cd codigo/simulacion
+# Ejecuta con valores por defecto (grid actual, 5 réplicas por escenario)
 python main.py
+
+# Ajustar rápidamente réplicas y procesos
+python main.py --replicas 5 --procesos 8 --yes
 ```
 
 Esto ejecutará:
-- 108 escenarios
-- 30 réplicas por escenario
-- Total: 3,240 simulaciones
+- 108 escenarios (grid actual)
+- Réplicas configurables (default: 5)
+- Total: escenarios × réplicas
 
 
 
@@ -91,10 +94,11 @@ from simulacion.experimentos import Experimento
 
 experimento = Experimento()
 resultados = experimento.ejecutar_escenario(
-    G=3,
-    SR=26,
-    I=17,
-    num_replicas=30
+  G=3,
+  SR=26,
+  I=17,
+  SC=3,
+  num_replicas=30
 )
 ```
 
@@ -103,7 +107,7 @@ resultados = experimento.ejecutar_escenario(
 ```python
 from simulacion.simulador import Simulador
 
-simulador = Simulador(G=3, SR=26, I=17, semilla=42)
+simulador = Simulador(G=3, SR=26, I=17, SC=3, semilla=42)
 resultados = simulador.ejecutar(mostrar_progreso=True)
 ```
 

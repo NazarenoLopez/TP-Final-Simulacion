@@ -27,6 +27,7 @@ class Paciente:
     requiere_incubadora: bool = False
     sala_recuperacion_asignada: Optional[int] = None
     incubadora_asignada: Optional[int] = None
+    consultorio_asignado: Optional[int] = None
     
     def calcular_tiempo_espera(self, tiempo_actual: float) -> float:
         """

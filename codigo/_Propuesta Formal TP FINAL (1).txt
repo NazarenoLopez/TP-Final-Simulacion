@@ -1,0 +1,125 @@
+﻿GRUPO 1                                                        Juan Manuel Castagno, Nazareno Lopez, Lucía Gandur
+
+
+Propuesta - TP FINAL 
+Optimización del costo operativo en la guardia gineco-obstétrica del Hospital Eurnekian mediante el uso de Simulación
+
+El Hospital Interzonal de Agudos Dr. Alberto Eurnekian, ubicado en  Ezeiza, Provincia de Buenos Aires, actualmente enfrenta dificultades presupuestarias mientras intenta cubrir la alta demanda de atenciones a la guardia de obstetricia, especialmente en los casos de partos, debido a la limitada dotación de recursos disponibles. 
+El hospital cuenta con 1 quirófano equipado para el área de obstetricia que será asignado a los pacientes a medida que se libera, SC[a] cantidad de salas de consultorio para la atención de consultas con un coste de instalación de $10.000.000 por sala y G cantidad de médicos gineco-obstetras de guardia disponibles. Los médicos gineco-obstetras son necesarios para atender los partos y  las consultas por demanda espontánea que llegan a la guardia. 
+Los pacientes al llegar se ordenan en tres colas: la primera y menos prioritaria será para aquellos pacientes que llegan al consultorio para revisión o estudio, la segunda y tercera cola será para los partos por cesárea y naturales respectivamente. Como es de esperarse, los partos naturales tendrán más prioridad que las cesáreas.
+Los pacientes llegan a la guardia para ser atendidos con un intervalo dado por una FDP conocida. Por otro lado, basándonos en el historial de atención de pacientes, se sabe que, del total que llegan al servicio de gineco-obstetricia, un 30% se presentan para dar a luz a sus bebés mientras que el resto son para consultas por demanda espontánea.
+El tiempo de atención de estas consultas está dado por una FDP entre 5 y 23 minutos. Mientras que el tiempo de atención para ambos tipos de parto responde a una función entre 50 y 70 minutos. La madre, independientemente de la situación del recién nacido, reposa en una sala de postoperatorio. Actualmente el hospital cuenta con SR[b] salas de reposo. El tiempo de reposo indicado por el hospital lo define una función equiprobable entre 24 y 36 hs como máximo por políticas del hospital. El costo para el hospital por hora de cuidado post operatorio por cada paciente es de $3.000 (comidas, atención 24/7, etc.), mientras que el costo de instalación de nuevas salas tiene un aproximado de $7.000.000. En caso de que al salir del quirófano no haya salas de recuperación disponibles, la madre será derivada a otro hospital cercano.
+En cuanto a los partos se estima mediante datos del hospital que un 57% son naturales y el resto son por cesárea. Los partos requieren de la presencia de un médico de guardia y además la disponibilidad de un quirófano. 
+El costo de uso del quirófano es de $95.000. Este costo incluye el personal de quirófano (anestesiólogo, ayudantes, instrumentadores quirúrgicos), insumos médicos y desinfección post operación. 
+Por otro lado, el hospital tiene un área de neonatología. Esta misma se encarga de los chequeos obligatorios apenas nacen los bebés y también del cuidado de los mismos cuando lo requieren. Los casos de cuidado intensivo, se dan 1 de cada diez partos que se realizan en este hospital y constan de un período de monitoreo de 4 días. 
+Para esta área se dispone de I camas de incubación que serán asignadas a los neonatos en caso de que el chequeo obligatorio confirme la internación. En caso de que al finalizar la operación no hayan incubadoras disponibles, el neonato será derivado a otro hospital mientras que la madre finaliza su periodo de recuperación. El costo de funcionamiento por día de estas camas de incubación es de $25.000 y su costo de adquisición ronda los $1.200.000, hoy en día el hospital cuenta con 15 de estas camas.
+Por parte del personal médico de guardia, el costo de cada uno mensualmente es de $2.000.000 y el equipo de médicos gineco-obstetras recibe un bono de $57.000 (por médico) cada 31 pacientes operados por mes. 
+Nos han contratado para definir la distribución del personal de salud, salas de consultorio,salas de recuperación e incubadoras con el objetivo de disminuir los costos al mínimo indispensable que permita cumplir la cuota de atención y conocer:
+* El promedio de espera en cola para ser atendido en guardia.
+* El porcentaje de tiempo en que las salas de recuperación están libres.
+* Porcentaje de pacientes derivados por falta de salas de recuperación.
+* El costo total mensual en gastos hospitalarios.
+* Costo inicial de instalaciones.
+VARIABLES DATOS:
+IAG                Intervalo entre arribos para atención en guardia (minutos).
+TAP                Tiempo de atención para realizar el parto (minutos).
+TAC                Tiempo de atención para consultas de guardia(minutos)
+TREP                 Tiempo de reposo postparto en salas de recuperación (horas).
+
+
+VARIABLES DE CONTROL:
+G                Cantidad de médicos de guardia gineco-obstetras.
+SR                Cantidad de salas de recuperación
+I                Cantidad de incubadoras.
+SC                Cantidad de salas de consultorio
+VARIABLE DE ESTADO:
+NSC                Cantidad de pacientes para consulta.
+NSPC                Cantidad de pacientes para parto por cesárea.
+NSPN                Cantidad de pacientes para parto natural.
+NSI                Cantidad de bebés para incubadora.
+NSR                Cantidad de pacientes en Salas de recuperación.
+MD                Cantidad de médicos disponibles
+F                Flag tipo de parto siendo atendido en quirófano
+VARIABLES DE RESULTADO:
+PECP                Promedio de espera en cola para ser atendido por parto - Minutos
+PECC                Promedio de espera en cola para ser atendido por consulta - Minutos
+PTOSR[i]        Porcentaje de tiempo ocioso de la sala de recuperación i
+PPDSR                Porcentaje de pacientes derivados por falta de salas de recuperación
+CTM                Costo total de operación mensual - ARS $ (Pesos Argentinos)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TEI:
+
+
+Evento
+	EFNOC
+	EFC
+	COND.
+	Llegada
+	Llegada
+	Salida quirófano
+	NSPC + NSPN = 1(Q) y MD>=1
+	
+
+Salida consultorio (n)
+	
+
+[NSPN + NSPC = 0 o TPSQ =/ HV]  y 
+MD>=1 y 
+NSC <= SC
+	Salida quirófano
+	-
+	Salida quirófano
+	NSPC + NSPN >= 1(Q)
+	Salida consultorio (n)
+	NSPC + NSPN = 0  y
+MD >=1
+NSC >= SC  
+	Salida recuperación (n)
+	NSR <= SR
+	Salida neonatología
+	NSI <= I
+	Salida recuperación (n)
+	-
+	-
+	-
+	Salida neonatología
+	-
+	-
+	-
+	Salida consultorio (n)
+	-
+	Salida consultorio (n)
+	[NSPN + NSPC = 0 o TPSQ =/ HV] y
+MD>=1 y
+NSC >= SC 
+	Salida quirófano
+	NSPC + NSPN >= 1(Q) y
+TPSQ = HV y
+MD >=1
+	
+
+TEF:
+        TPLL                Tiempo de la próxima llegada de un paciente a la guardia.
+        TPSQ                Tiempo de la próxima salida quirófano.
+        TPSR(i)                Tiempo de la próxima salida recuperación (i).
+        TPSN                Tiempo de la próxima salida neonatología.
+        TPSC(i)                Tiempo de la próxima salida del consultorio (i)
+
+
+[a]1
+[b]24

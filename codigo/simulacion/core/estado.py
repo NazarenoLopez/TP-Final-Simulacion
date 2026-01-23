@@ -12,7 +12,7 @@ class EstadoSistema:
     Maneja el estado dinámico del sistema de simulación.
     """
     
-    def __init__(self, G: int, SR: int, I: int):
+    def __init__(self, G: int, SR: int, I: int, SC: int = 1):
         """
         Inicializa el estado del sistema.
         
@@ -25,6 +25,7 @@ class EstadoSistema:
         self.G = G
         self.SR = SR
         self.I = I
+        self.SC = SC  # Salas de consultorio
         
         # Colas de pacientes
         self.cola_consultas = deque()
@@ -34,10 +35,12 @@ class EstadoSistema:
         # Recursos disponibles
         self.medicos_disponibles = G
         self.quirofano_disponible = True
+        self.consultorios_disponibles = SC
         self.salas_recuperacion_libres = SR
         self.incubadoras_libres = I
         
         # Recursos ocupados
+        self.consultorios_ocupados = 0
         self.salas_recuperacion_ocupadas = 0
         self.incubadoras_ocupadas = 0
         
@@ -62,19 +65,44 @@ class EstadoSistema:
         # Acumuladores de ocupación
         self.tiempo_ocupacion_medicos = 0.0
         self.tiempo_ocupacion_quirofano = 0.0
+        self.tiempo_ocupacion_consultorios = np.zeros(SC)  # Por consultorio
         self.tiempo_ocupacion_sr = np.zeros(SR)  # Por sala
         self.tiempo_inactividad_sr = np.zeros(SR)  # Por sala
         self.tiempo_ocupacion_inc = np.zeros(I)  # Por incubadora
-        
+
         # Tiempo de última actualización de inactividad
+        self.tiempo_ultima_actualizacion_consultorios = np.zeros(SC)
         self.tiempo_ultima_actualizacion_sr = np.zeros(SR)
         self.tiempo_ultima_actualizacion_inc = np.zeros(I)
         
         # Inicializar tiempos de última actualización
+        for i in range(SC):
+            self.tiempo_ultima_actualizacion_consultorios[i] = 0.0
         for i in range(SR):
             self.tiempo_ultima_actualizacion_sr[i] = 0.0
         for i in range(I):
             self.tiempo_ultima_actualizacion_inc[i] = 0.0
+
+    def asignar_consultorio(self) -> int:
+        """Asigna un consultorio disponible."""
+        if self.consultorios_disponibles > 0:
+            for i in range(self.SC):
+                if self.tiempo_ocupacion_consultorios[i] == 0 or \
+                   (self.tiempo_actual - self.tiempo_ultima_actualizacion_consultorios[i]) >= 0:
+                    self.consultorios_disponibles -= 1
+                    self.consultorios_ocupados += 1
+                    self.tiempo_ultima_actualizacion_consultorios[i] = self.tiempo_actual
+                    return i
+        return -1
+
+    def liberar_consultorio(self, consultorio_id: int, tiempo_ocupacion: float):
+        """Libera un consultorio y acumula su tiempo de uso."""
+        if consultorio_id < 0 or consultorio_id >= self.SC:
+            return
+        self.tiempo_ocupacion_consultorios[consultorio_id] += tiempo_ocupacion
+        self.consultorios_disponibles += 1
+        self.consultorios_ocupados -= 1
+        self.tiempo_ultima_actualizacion_consultorios[consultorio_id] = self.tiempo_actual
     
     def actualizar_inactividad_sr(self, sala_id: int):
         """

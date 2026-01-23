@@ -94,41 +94,41 @@ class CalculadoraIndicadores:
         return tiempo_total / estado.total_pacientes_atendidos
     
     def _calcular_utilizacion_medicos(self, estado: EstadoSistema) -> float:
-        """Calcula utilización promedio de médicos."""
+        """Calcula utilización promedio de médicos (fracción 0-1)."""
         if self.tiempo_efectivo == 0:
             return 0.0
         tiempo_total_disponible = estado.G * self.tiempo_efectivo
         if tiempo_total_disponible == 0:
             return 0.0
-        return (estado.tiempo_ocupacion_medicos / tiempo_total_disponible) * 100.0
+        return estado.tiempo_ocupacion_medicos / tiempo_total_disponible
     
     def _calcular_utilizacion_quirofano(self, estado: EstadoSistema) -> float:
-        """Calcula utilización del quirófano."""
+        """Calcula utilización del quirófano (fracción 0-1)."""
         if self.tiempo_efectivo == 0:
             return 0.0
-        return (estado.tiempo_ocupacion_quirofano / self.tiempo_efectivo) * 100.0
+        return estado.tiempo_ocupacion_quirofano / self.tiempo_efectivo
     
     def _calcular_ptosr(self, estado: EstadoSistema) -> list:
-        """Calcula porcentaje de tiempo ocioso por sala de recuperación."""
+        """Calcula porcentaje de tiempo ocioso por sala de recuperación (fracción 0-1)."""
         ptosr = []
         for i in range(estado.SR):
             if self.tiempo_efectivo == 0:
                 ptosr.append(0.0)
             else:
-                porcentaje = (estado.tiempo_inactividad_sr[i] / self.tiempo_efectivo) * 100.0
-                ptosr.append(porcentaje)
+                fraccion = estado.tiempo_inactividad_sr[i] / self.tiempo_efectivo
+                ptosr.append(fraccion)
         return ptosr
     
     def _calcular_ppdsr(self, estado: EstadoSistema) -> float:
-        """Calcula porcentaje de pacientes derivados por falta de salas de recuperación."""
+        """Calcula porcentaje de pacientes derivados por falta de salas de recuperación (fracción 0-1)."""
         total_partos = estado.total_partos_naturales + estado.total_partos_cesarea
         if total_partos == 0:
             return 0.0
-        return (estado.total_derivaciones_sr / total_partos) * 100.0
+        return estado.total_derivaciones_sr / total_partos
     
     def _calcular_ppdinc(self, estado: EstadoSistema) -> float:
-        """Calcula porcentaje de neonatos derivados por falta de incubadoras."""
+        """Calcula porcentaje de neonatos derivados por falta de incubadoras (fracción 0-1)."""
         if estado.total_neonatos_requieren_inc == 0:
             return 0.0
-        return (estado.total_derivaciones_inc / estado.total_neonatos_requieren_inc) * 100.0
+        return estado.total_derivaciones_inc / estado.total_neonatos_requieren_inc
 

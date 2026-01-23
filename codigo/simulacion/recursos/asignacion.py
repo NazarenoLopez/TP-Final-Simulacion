@@ -73,19 +73,24 @@ def asignar_recursos(
         recursos_asignados = True
     
     # Prioridad 3: Consultas
-    # Requieren: solo médico
-    elif (len(estado.cola_consultas) > 0 and 
-          estado.medicos_disponibles > 0):
-        
+    # Requieren: médico + consultorio
+    elif (
+        len(estado.cola_consultas) > 0 and
+        estado.medicos_disponibles > 0 and
+        estado.consultorios_disponibles > 0
+    ):
+
         paciente = estado.cola_consultas.popleft()
         estado.medicos_disponibles -= 1
+        consultorio_id = estado.asignar_consultorio()
+        paciente.consultorio_asignado = consultorio_id
         
         # Programar inicio de consulta (inmediato)
         evento = Evento(
             tipo='inicio_consulta',
             tiempo=estado.tiempo_actual,
             paciente_id=paciente.id,
-            datos_extra={'paciente': paciente}
+            datos_extra={'paciente': paciente, 'consultorio_id': consultorio_id}
         )
         tef.insertar(evento)
         recursos_asignados = True
