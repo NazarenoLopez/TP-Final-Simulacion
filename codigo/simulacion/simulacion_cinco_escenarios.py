@@ -55,28 +55,28 @@ class ComparadorCincoEscenarios:
                 'I': 12,  # 12 incubadoras (actualizado)
                 'descripcion': 'Configuración actual actualizada del hospital'
             },
-            'MEJOR_1': {
+            'CASO 1': {
                 'G': 3,   # Óptimo balance costo-servicio
                 'SC': 3,  # Suficientes consultorios
                 'SR': 24, # Amplio margen para partos
                 'I': 15,  # Adecuado para neonatología
                 'descripcion': 'Configuración optimizada principal - maximiza calidad de servicio'
             },
-            'MEJOR_2': {
+            'CASO 2': {
                 'G': 3,   # Misma cantidad de médicos
                 'SC': 2,  # Menos consultorios pero suficientes
                 'SR': 20, # Reducción moderada en salas
                 'I': 13,  # Incubadoras suficientes
                 'descripcion': 'Configuración optimizada alternativa - balance costo-calidad'
             },
-            'PEOR_1': {
+            'CASO 3': {
                 'G': 1,   # Recursos mínimos
                 'SC': 1,  # Mínimo posible
                 'SR': 15, # Salas insuficientes (alta derivación)
                 'I': 10,  # Incubadoras insuficientes
                 'descripcion': 'Configuración mínima - alta probabilidad de derivaciones'
             },
-            'PEOR_2': {
+            'CASO 4': {
                 'G': 2,   # Recursos limitados
                 'SC': 1,  # Consultorio único
                 'SR': 16, # Salas apenas suficientes
@@ -467,10 +467,10 @@ class ComparadorCincoEscenarios:
         # Colores para cada escenario
         colores = {
             'ACTUAL': '#2E86AB',      # Azul
-            'MEJOR_1': '#06A77D',     # Verde
-            'MEJOR_2': '#52D1DC',     # Cyan
-            'PEOR_1': '#D62246',      # Rojo
-            'PEOR_2': '#F77E21'       # Naranja
+            'CASO 1': '#06A77D',      # Verde
+            'CASO 2': '#52D1DC',      # Cyan
+            'CASO 3': '#D62246',      # Rojo
+            'CASO 4': '#F77E21'       # Naranja
         }
         
         nombres = list(resultados.keys())
@@ -508,27 +508,14 @@ class ComparadorCincoEscenarios:
         # 5. Costo Total Mensual
         self._grafico_costos(resultados, dir_graficos / 'costos_mensuales.png', colores)
         
-        # 6. Utilización de Recursos
-        self._grafico_utilizacion(resultados, dir_graficos / 'utilizacion_recursos.png', colores)
-        
-        # 7. Total de Derivaciones (Salas e Incubadoras)
+        # 6. Total de Derivaciones (Salas e Incubadoras)
         self._grafico_derivaciones_totales(
             resultados, 
             dir_graficos / 'derivaciones_totales.png', 
             colores
         )
         
-        # 8. Volumen de Atención
-        self._grafico_volumen_atencion(
-            resultados, 
-            dir_graficos / 'volumen_atencion.png', 
-            colores
-        )
-        
-        # 9. Comparación Multi-indicador (Radar/Spider)
-        self._grafico_radar(resultados, dir_graficos / 'comparacion_radar.png', colores)
-        
-        # 10. Resumen de indicadores clave
+        # 7. Resumen de indicadores clave
         self._grafico_resumen_indicadores(
             resultados, 
             dir_graficos / 'resumen_indicadores.png', 
@@ -536,6 +523,21 @@ class ComparadorCincoEscenarios:
         )
         
         print(f"\n✓ Gráficos generados en: {dir_graficos}")
+    
+    def _crear_referencias_config(self, resultados: dict) -> str:
+        """
+        Crea el texto de referencias de configuración para los gráficos.
+        
+        Returns:
+            String con las configuraciones en formato "Nombre: XG, YSC, ZSR, WI"
+        """
+        referencias = []
+        for nombre, datos in resultados.items():
+            config = datos['configuracion']
+            ref = f"{nombre}: {config['G']}G, {config['SC']}SC, {config['SR']}SR, {config['I']}I"
+            referencias.append(ref)
+        
+        return " | ".join(referencias)
     
     def _grafico_barras_con_ic(self, resultados, indicador, titulo, ylabel, 
                                 archivo, colores):
@@ -567,7 +569,12 @@ class ComparadorCincoEscenarios:
                    f'{media:.2f}',
                    ha='center', va='bottom', fontsize=10, fontweight='bold')
         
-        plt.tight_layout()
+        # Agregar referencias de configuración
+        referencias = self._crear_referencias_config(resultados)
+        fig.text(0.5, 0.01, referencias, ha='center', fontsize=8, style='italic', 
+                wrap=True, color='gray')
+        
+        plt.tight_layout(rect=[0, 0.03, 1, 1])
         plt.savefig(archivo, dpi=300, bbox_inches='tight')
         plt.close()
         print(f"  ✓ Generado: {archivo.name}")
@@ -612,7 +619,12 @@ class ComparadorCincoEscenarios:
                        f'{height:.1f}',
                        ha='center', va='bottom', fontsize=9)
         
-        plt.tight_layout()
+        # Agregar referencias de configuración
+        referencias = self._crear_referencias_config(resultados)
+        fig.text(0.5, 0.01, referencias, ha='center', fontsize=8, style='italic', 
+                wrap=True, color='gray')
+        
+        plt.tight_layout(rect=[0, 0.03, 1, 1])
         plt.savefig(archivo, dpi=300, bbox_inches='tight')
         plt.close()
         print(f"  ✓ Generado: {archivo.name}")
@@ -647,7 +659,12 @@ class ComparadorCincoEscenarios:
                    f'${media:.2f}M',
                    ha='center', va='bottom', fontsize=10, fontweight='bold')
         
-        plt.tight_layout()
+        # Agregar referencias de configuración
+        referencias = self._crear_referencias_config(resultados)
+        fig.text(0.5, 0.01, referencias, ha='center', fontsize=8, style='italic', 
+                wrap=True, color='gray')
+        
+        plt.tight_layout(rect=[0, 0.03, 1, 1])
         plt.savefig(archivo, dpi=300, bbox_inches='tight')
         plt.close()
         print(f"  ✓ Generado: {archivo.name}")
@@ -728,7 +745,12 @@ class ComparadorCincoEscenarios:
                            f'{int(height)}',
                            ha='center', va='bottom', fontsize=9)
         
-        plt.tight_layout()
+        # Agregar referencias de configuración
+        referencias = self._crear_referencias_config(resultados)
+        fig.text(0.5, 0.01, referencias, ha='center', fontsize=8, style='italic', 
+                wrap=True, color='gray')
+        
+        plt.tight_layout(rect=[0, 0.03, 1, 1])
         plt.savefig(archivo, dpi=300, bbox_inches='tight')
         plt.close()
         print(f"  ✓ Generado: {archivo.name}")
@@ -865,8 +887,8 @@ class ComparadorCincoEscenarios:
         
         nombres = list(resultados.keys())
         
-        fig = plt.figure(figsize=(16, 12))
-        gs = fig.add_gridspec(3, 2, hspace=0.3, wspace=0.3)
+        fig = plt.figure(figsize=(16, 10))
+        gs = fig.add_gridspec(2, 3, hspace=0.3, wspace=0.3)
         
         # 1. Espera Consultas
         ax1 = fig.add_subplot(gs[0, 0])
@@ -887,7 +909,7 @@ class ComparadorCincoEscenarios:
         ax2.grid(axis='y', alpha=0.3)
         
         # 3. Costos
-        ax3 = fig.add_subplot(gs[1, 0])
+        ax3 = fig.add_subplot(gs[0, 2])
         medias = [resultados[n]['indicadores']['CTM']['media'] / 1e6 for n in nombres]
         ax3.bar(range(len(nombres)), medias, color=[colores[n] for n in nombres], alpha=0.8)
         ax3.set_title('Costo Mensual (Millones ARS)', fontweight='bold')
@@ -895,18 +917,17 @@ class ComparadorCincoEscenarios:
         ax3.set_xticklabels(nombres, rotation=45, ha='right', fontsize=9)
         ax3.grid(axis='y', alpha=0.3)
         
-        # 4. Utilización Médicos
-        ax4 = fig.add_subplot(gs[1, 1])
-        medias = [resultados[n]['indicadores']['UT_med']['media'] for n in nombres]
+        # 4. Espera Partos
+        ax4 = fig.add_subplot(gs[1, 0])
+        medias = [resultados[n]['indicadores']['PEC_general']['media'] for n in nombres]
         ax4.bar(range(len(nombres)), medias, color=[colores[n] for n in nombres], alpha=0.8)
-        ax4.set_title('Utilización Médicos (%)', fontweight='bold')
+        ax4.set_title('Espera Partos (min)', fontweight='bold')
         ax4.set_xticks(range(len(nombres)))
         ax4.set_xticklabels(nombres, rotation=45, ha='right', fontsize=9)
-        ax4.set_ylim(0, 100)
         ax4.grid(axis='y', alpha=0.3)
         
         # 5. Tiempo Ocioso Salas
-        ax5 = fig.add_subplot(gs[2, 0])
+        ax5 = fig.add_subplot(gs[1, 1])
         medias = [resultados[n]['indicadores']['PTOSR_promedio']['media'] for n in nombres]
         ax5.bar(range(len(nombres)), medias, color=[colores[n] for n in nombres], alpha=0.8)
         ax5.set_title('Tiempo Ocioso Salas (%)', fontweight='bold')
@@ -915,7 +936,7 @@ class ComparadorCincoEscenarios:
         ax5.grid(axis='y', alpha=0.3)
         
         # 6. Total Derivaciones
-        ax6 = fig.add_subplot(gs[2, 1])
+        ax6 = fig.add_subplot(gs[1, 2])
         der_sr = [resultados[n]['indicadores']['total_derivaciones_sr']['media'] 
                  for n in nombres]
         der_inc = [resultados[n]['indicadores']['total_derivaciones_inc']['media'] 
@@ -932,6 +953,11 @@ class ComparadorCincoEscenarios:
         
         fig.suptitle('Resumen de Indicadores Clave - Comparación de Escenarios',
                     fontsize=16, fontweight='bold', y=0.995)
+        
+        # Agregar referencias de configuración
+        referencias = self._crear_referencias_config(resultados)
+        fig.text(0.5, 0.01, referencias, ha='center', fontsize=9, style='italic', 
+                wrap=True, color='gray')
         
         plt.savefig(archivo, dpi=300, bbox_inches='tight')
         plt.close()

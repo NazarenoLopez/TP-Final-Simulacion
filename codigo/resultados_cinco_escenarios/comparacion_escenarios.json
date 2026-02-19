@@ -162,8 +162,8 @@
       }
     }
   },
-  "MEJOR_1": {
-    "nombre": "MEJOR_1",
+  "CASO 1": {
+    "nombre": "CASO 1",
     "configuracion": {
       "G": 3,
       "SC": 3,
@@ -325,8 +325,8 @@
       }
     }
   },
-  "MEJOR_2": {
-    "nombre": "MEJOR_2",
+  "CASO 2": {
+    "nombre": "CASO 2",
     "configuracion": {
       "G": 3,
       "SC": 2,
@@ -488,8 +488,8 @@
       }
     }
   },
-  "PEOR_1": {
-    "nombre": "PEOR_1",
+  "CASO 3": {
+    "nombre": "CASO 3",
     "configuracion": {
       "G": 1,
       "SC": 1,
@@ -651,8 +651,8 @@
       }
     }
   },
-  "PEOR_2": {
-    "nombre": "PEOR_2",
+  "CASO 4": {
+    "nombre": "CASO 4",
     "configuracion": {
       "G": 2,
       "SC": 1,

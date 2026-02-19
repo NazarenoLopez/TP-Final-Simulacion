@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -376,7 +376,7 @@
                             <td>Configuración actual</td>
                         </tr>
                         <tr>
-                            <td><strong>MEJOR_1</strong> <span class="badge best">Óptimo</span></td>
+                            <td><strong>CASO 1</strong> <span class="badge best">Óptimo</span></td>
                             <td>3</td>
                             <td>3</td>
                             <td>24</td>
@@ -384,7 +384,7 @@
                             <td>Máxima calidad de servicio</td>
                         </tr>
                         <tr>
-                            <td><strong>MEJOR_2</strong> <span class="badge best">Balance</span></td>
+                            <td><strong>CASO 2</strong> <span class="badge best">Balance</span></td>
                             <td>3</td>
                             <td>2</td>
                             <td>20</td>
@@ -392,7 +392,7 @@
                             <td>Balance costo-calidad</td>
                         </tr>
                         <tr>
-                            <td><strong>PEOR_1</strong> <span class="badge bad">No viable</span></td>
+                            <td><strong>CASO 3</strong> <span class="badge bad">No viable</span></td>
                             <td>1</td>
                             <td>1</td>
                             <td>15</td>
@@ -400,7 +400,7 @@
                             <td>Configuración mínima</td>
                         </tr>
                         <tr>
-                            <td><strong>PEOR_2</strong> <span class="badge warning">Subóptimo</span></td>
+                            <td><strong>CASO 4</strong> <span class="badge warning">Subóptimo</span></td>
                             <td>2</td>
                             <td>1</td>
                             <td>16</td>
@@ -434,7 +434,7 @@
                     </div>
                     
                     <div class="scenario-card mejor">
-                        <h3>🟢 MEJOR_1 ⭐</h3>
+                        <h3>🟢 CASO 1 ⭐</h3>
                         <div class="metric">
                             <span class="metric-label">Espera Consultas</span>
                             <span class="metric-value good">14.7 min (-33%)</span>
@@ -454,7 +454,7 @@
                     </div>
                     
                     <div class="scenario-card mejor">
-                        <h3>🟢 MEJOR_2 🏆</h3>
+                        <h3>🟢 CASO 2 🏆</h3>
                         <div class="metric">
                             <span class="metric-label">Espera Consultas</span>
                             <span class="metric-value good">14.8 min (-33%)</span>
@@ -474,7 +474,7 @@
                     </div>
                     
                     <div class="scenario-card peor">
-                        <h3>🔴 PEOR_1 ❌</h3>
+                        <h3>🔴 CASO 3 ❌</h3>
                         <div class="metric">
                             <span class="metric-label">Espera Consultas</span>
                             <span class="metric-value bad">84.2 min (+282%)</span>
@@ -494,7 +494,7 @@
                     </div>
                     
                     <div class="scenario-card peor">
-                        <h3>🟠 PEOR_2 ⚠️</h3>
+                        <h3>🟠 CASO 4 ⚠️</h3>
                         <div class="metric">
                             <span class="metric-label">Espera Consultas</span>
                             <span class="metric-value good">21.9 min</span>
@@ -540,11 +540,7 @@
                         <img src="graficos/costos_mensuales.png" alt="Costos">
                     </div>
                     
-                    <div class="graph-container">
-                        <h3>📈 Utilización de Recursos</h3>
-                        <img src="graficos/utilizacion_recursos.png" alt="Utilización">
-                    </div>
-                    
+                                       
                     <div class="graph-container">
                         <h3>🏥 Tiempo Ocioso de Salas</h3>
                         <img src="graficos/tiempo_ocioso_salas.png" alt="Tiempo Ocioso">
@@ -555,17 +551,10 @@
                         <img src="graficos/derivaciones_totales.png" alt="Derivaciones Totales">
                     </div>
                     
-                    <div class="graph-container">
-                        <h3>👥 Volumen de Atención</h3>
-                        <img src="graficos/volumen_atencion.png" alt="Volumen">
-                    </div>
+                    
                 </div>
                 
-                <div class="graph-container" style="margin-top: 30px;">
-                    <h3>🕸️ Comparación Multi-Indicador (Radar)</h3>
-                    <img src="graficos/comparacion_radar.png" alt="Radar" style="max-width: 800px;">
-                </div>
-                
+                               
                 <div class="graph-container">
                     <h3>📊 Resumen de Indicadores Clave</h3>
                     <img src="graficos/resumen_indicadores.png" alt="Resumen" style="max-width: 1200px;">
@@ -576,13 +565,13 @@
             <div id="comparacion" class="tab-content">
                 <h2 style="color: #2E86AB; margin-bottom: 20px;">⚖️ Comparación Detallada</h2>
                 
-                <h3 style="color: #2E86AB; margin: 30px 0 15px;">🆚 ACTUAL vs. MEJOR_2 (Recomendado)</h3>
+                <h3 style="color: #2E86AB; margin: 30px 0 15px;">🆚 ACTUAL vs. CASO 2 (Recomendado)</h3>
                 <table class="comparison-table">
                     <thead>
                         <tr>
                             <th>Indicador</th>
                             <th>ACTUAL</th>
-                            <th>MEJOR_2</th>
+                            <th>CASO 2</th>
                             <th>Diferencia</th>
                             <th>Mejora</th>
                         </tr>
@@ -627,17 +616,17 @@
                 </table>
                 
                 <div class="summary-box" style="margin-top: 20px;">
-                    <h4>💡 Conclusión MEJOR_2</h4>
-                    <p><strong>MEJOR_2 es la opción RECOMENDADA.</strong> Ofrece mejoras significativas en calidad de servicio con un incremento de costo razonable (+5.3%) y una inversión inicial moderada ($10M). El ROI estimado es de 2-3 años.</p>
+                    <h4>💡 Conclusión CASO 2</h4>
+                    <p><strong>CASO 2 es la opción RECOMENDADA.</strong> Ofrece mejoras significativas en calidad de servicio con un incremento de costo razonable (+5.3%) y una inversión inicial moderada ($10M). El ROI estimado es de 2-3 años.</p>
                 </div>
                 
-                <h3 style="color: #2E86AB; margin: 30px 0 15px;">🆚 ACTUAL vs. MEJOR_1 (Máxima Calidad)</h3>
+                <h3 style="color: #2E86AB; margin: 30px 0 15px;">🆚 ACTUAL vs. CASO 1 (Máxima Calidad)</h3>
                 <table class="comparison-table">
                     <thead>
                         <tr>
                             <th>Indicador</th>
                             <th>ACTUAL</th>
-                            <th>MEJOR_1</th>
+                            <th>CASO 1</th>
                             <th>Diferencia</th>
                             <th>Mejora</th>
                         </tr>
@@ -682,8 +671,8 @@
                 </table>
                 
                 <div class="summary-box" style="margin-top: 20px;">
-                    <h4>💡 Conclusión MEJOR_1</h4>
-                    <p><strong>MEJOR_1 ofrece la MÁXIMA CALIDAD.</strong> Prácticamente elimina las derivaciones (95% menos) con un incremento de costo moderado (+5.6%). Requiere mayor inversión inicial ($20M) pero garantiza excelencia en el servicio. ROI estimado: 3-4 años.</p>
+                    <h4>💡 Conclusión CASO 1</h4>
+                    <p><strong>CASO 1 ofrece la MÁXIMA CALIDAD.</strong> Prácticamente elimina las derivaciones (95% menos) con un incremento de costo moderado (+5.6%). Requiere mayor inversión inicial ($20M) pero garantiza excelencia en el servicio. ROI estimado: 3-4 años.</p>
                 </div>
                 
                 <h3 style="color: #2E86AB; margin: 30px 0 15px;">❌ Escenarios NO Viables</h3>
@@ -698,7 +687,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>PEOR_1</strong></td>
+                            <td><strong>CASO 3</strong></td>
                             <td>Recursos insuficientes</td>
                             <td>
                                 • Espera 84 min (vs 22 min ACTUAL)<br>
@@ -708,7 +697,7 @@
                             <td><span class="badge bad">NO IMPLEMENTAR</span></td>
                         </tr>
                         <tr>
-                            <td><strong>PEOR_2</strong></td>
+                            <td><strong>CASO 4</strong></td>
                             <td>Derivaciones excesivas</td>
                             <td>
                                 • 1,008 derivaciones (4x más que ACTUAL)<br>
@@ -726,9 +715,9 @@
                 <h2 style="color: #2E86AB; margin-bottom: 20px;">✅ Recomendaciones Finales</h2>
                 
                 <div class="recommendation">
-                    <h3>🏆 OPCIÓN RECOMENDADA: MEJOR_2</h3>
+                    <h3>🏆 OPCIÓN RECOMENDADA: CASO 2</h3>
                     <p style="font-size: 1.2em; margin-bottom: 15px;">
-                        <strong>ACTUALIZAR A MEJOR_2</strong> - Mejor balance costo-beneficio con inversión moderada
+                        <strong>ACTUALIZAR A CASO 2</strong> - Mejor balance costo-beneficio con inversión moderada
                     </p>
                     
                     <h4 style="margin-top: 20px; margin-bottom: 10px;">✓ Ventajas:</h4>
@@ -751,9 +740,9 @@
                 </div>
                 
                 <div class="recommendation" style="background: linear-gradient(135deg, #2E86AB 0%, #667eea 100%);">
-                    <h3>🥇 ALTERNATIVA PREMIUM: MEJOR_1</h3>
+                    <h3>🥇 ALTERNATIVA PREMIUM: CASO 1</h3>
                     <p style="font-size: 1.2em; margin-bottom: 15px;">
-                        <strong>ACTUALIZAR A MEJOR_1</strong> - Para máxima calidad de servicio
+                        <strong>ACTUALIZAR A CASO 1</strong> - Para máxima calidad de servicio
                     </p>
                     
                     <h4 style="margin-top: 20px; margin-bottom: 10px;">✓ Ventajas:</h4>
@@ -813,7 +802,7 @@
                             <td><strong>Fase 2</strong></td>
                             <td>6-12 meses</td>
                             <td>
-                                • Implementar MEJOR_2<br>
+                                • Implementar CASO 2<br>
                                 • Contratar médico adicional<br>
                                 • Habilitar infraestructura
                             </td>
@@ -823,8 +812,8 @@
                             <td><strong>Fase 3</strong></td>
                             <td>1-2 años</td>
                             <td>
-                                • Evaluar resultados MEJOR_2<br>
-                                • Si es positivo, considerar upgrade a MEJOR_1<br>
+                                • Evaluar resultados CASO 2<br>
+                                • Si es positivo, considerar upgrade a CASO 1<br>
                                 • Monitorear KPIs
                             </td>
                             <td>Optimización continua</td>
@@ -932,7 +921,7 @@
                     </div>
                     
                     <div class="scenario-card mejor">
-                        <h3>🟢 MEJOR_1 ⭐</h3>
+                        <h3>🟢 CASO 1 ⭐</h3>
                         <p style="margin-bottom: 15px;"><strong>Configuración optimizada principal - maximiza calidad de servicio</strong></p>
                         <div class="metric">
                             <span class="metric-label">Médicos</span>
@@ -973,7 +962,7 @@
                     </div>
                     
                     <div class="scenario-card mejor">
-                        <h3>🟢 MEJOR_2 🏆</h3>
+                        <h3>🟢 CASO 2 🏆</h3>
                         <p style="margin-bottom: 15px;"><strong>Configuración optimizada alternativa - balance costo-calidad</strong></p>
                         <div class="metric">
                             <span class="metric-label">Médicos</span>
@@ -1014,7 +1003,7 @@
                     </div>
                     
                     <div class="scenario-card peor">
-                        <h3>🔴 PEOR_1 ❌</h3>
+                        <h3>🔴 CASO 3 ❌</h3>
                         <p style="margin-bottom: 15px;"><strong>Configuración mínima - alta probabilidad de derivaciones</strong></p>
                         <div class="metric">
                             <span class="metric-label">Médicos</span>
@@ -1055,7 +1044,7 @@
                     </div>
                     
                     <div class="scenario-card peor">
-                        <h3>🟠 PEOR_2 ⚠️</h3>
+                        <h3>🟠 CASO 4 ⚠️</h3>
                         <p style="margin-bottom: 15px;"><strong>Configuración subóptima - servicio comprometido</strong></p>
                         <div class="metric">
                             <span class="metric-label">Médicos</span>
@@ -1128,3 +1117,4 @@
     </script>
 </body>
 </html>
+
