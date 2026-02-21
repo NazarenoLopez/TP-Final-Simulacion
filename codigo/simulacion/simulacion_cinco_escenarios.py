@@ -547,6 +547,12 @@ class ComparadorCincoEscenarios:
         medias = [resultados[n]['indicadores'][indicador]['media'] for n in nombres]
         stds = [resultados[n]['indicadores'][indicador]['std'] for n in nombres]
         
+        # Detectar si son porcentajes (valores típicamente < 1) y convertir a escala 0-100
+        es_porcentaje = ylabel.startswith('Porcentaje')
+        if es_porcentaje:
+            medias = [m * 100 for m in medias]
+            stds = [s * 100 for s in stds]
+        
         fig, ax = plt.subplots(figsize=(12, 7))
         
         x = np.arange(len(nombres))
